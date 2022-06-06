@@ -1,0 +1,177 @@
+baseURL = "https://jgorostegui.github.io/"
+languageCode = "en-us"
+title = "Josu Gorostegui"
+theme = "LoveIt"
+
+defaultContentLanguage = "en"
+languageName = "English"
+paginate = 12
+
+[author]
+  name = "Josu Gorostegui"
+  email = ""
+  link = ""
+
+
+
+[params]
+  # site default theme ["auto", "light", "dark"]
+  defaultTheme = "dark"
+  # public git repo url only then enableGitInfo is true
+  gitRepo = "https://github.com/jgorostegui/jgorostegui.github.io"
+  # which hash function used for SRI, when empty, no SRI is used
+  # ["sha256", "sha384", "sha512", "md5"]
+  fingerprint = ""
+  # date format
+  # 日期格式
+  dateFormat = "2006-01-02"
+  # website title for Open Graph and Twitter Cards
+  title = "asdfasdf asdf asdf asdf "
+  # website description for RSS, SEO, Open Graph and Twitter Cards
+  description = "asdfasdf"
+  # website images for Open Graph and Twitter Cards
+  images = []
+
+
+  #####################
+  # Header config
+  [params.header]
+    # desktop header mode ["fixed", "normal", "auto"]
+    desktopMode = "fixed"
+    # mobile header mode ["fixed", "normal", "auto"]
+    mobileMode = "auto"
+    # Header title config
+    [params.header.title]
+      # URL of the LOGO
+      logo = ""
+      # title name
+      # 标题名称
+      name = "Josu Gorostegui"
+      # you can add extra information before the name (HTML format is supported), such as icons
+      pre = ""
+      # you can add extra information after the name (HTML format is supported), such as icons
+      post = ""
+      # whether to use typeit animation for title name
+      typeit = false
+
+[params.footer]
+  enable = true
+  # Custom content (HTML format is supported)
+  custom = ""
+  # whether to show Hugo and theme info
+  hugo = false
+  # whether to show copyright info
+  copyright = true
+  # whether to show the author
+  author = true
+  # site creation time
+  since = 2022
+  # ICP info only in China (HTML format is supported)
+  icp = ""
+  # license info (HTML format is supported)
+  license= ""
+
+  [params.section]
+    # special amount of posts in each section page
+    paginate = 20
+    # date format (month and day)
+    dateFormat = "01-02"
+    # amount of RSS pages
+    rss = 10
+
+  # List (category or tag) page config
+  [params.list]
+    # special amount of posts in each list page
+    paginate = 20
+    # date format (month and day)
+    dateFormat = "01-02"
+    # amount of RSS pages
+    rss = 10
+
+  # App icon config
+  [params.app]
+    # optional site title override for the app when added to an iOS home screen or Android launcher
+    title = "My cool site"
+    # whether to omit favicon resource links
+    noFavicon = false
+    # modern SVG favicon to use in place of older style .png and .ico files
+    svgFavicon = ""
+    # Android browser theme color
+    themeColor = "#ffffff"
+    # Safari mask icon color
+    iconColor = "#5bbad5"
+    # Windows v8-11 tile color
+    tileColor = "#da532c"
+
+  # Search config
+  [params.search]
+    enable = false
+    # type of search engine ["lunr", "algolia"]
+    type = "lunr"
+    # max index length of the chunked content
+    contentLength = 4000
+    # placeholder of the search bar
+    placeholder = ""
+    # max number of results length
+    maxResultLength = 10
+    # snippet length of the result
+    snippetLength = 30
+    # HTML tag name of the highlight part in results
+    highlightTag = "em"
+    # whether to use the absolute URL based on the baseURL in search index
+    absoluteURL = false
+    [params.search.algolia]
+      index = ""
+      appID = ""
+      searchKey = ""
+
+  # Home page config
+  [params.home]
+    # amount of RSS pages
+    # RSS 文章数目
+    rss = 10
+    # Home page profile
+    [params.home.profile]
+      enable = true
+      # Gravatar Email for preferred avatar in home page
+      # Gravatar 邮箱，用于优先在主页显示的头像
+      gravatarEmail = ""
+      # URL of avatar shown in home page
+      avatarURL = ""
+      # title shown in home page (HTML format is supported)
+      title = ""
+      # subtitle shown in home page (HTML format is supported)
+      subtitle = "AI, Software Engineering, Technology, etc."
+      # whether to use typeit animation for subtitle
+      typeit = true
+      # whether to show social links
+      social = true
+      # disclaimer (HTML format is supported)
+      disclaimer = ""
+    # Home page posts
+    [params.home.posts]
+      enable = true
+      # special amount of posts in each home posts page
+      paginate = 6
+
+  [params.social]
+    GitHub = "https://github.com/jgorostegui"
+    Linkedin = "https://www.linkedin.com/in/josugorostegui"
+    Medium = "https://medium.com/@jgorostegui/about"
+    
+# [languages]
+#   [languages.en]
+#     weight = 1
+#     languageCode = "en"
+#     languageName = "English"
+#     hasCJKLanguage = false
+
+#      [[languages.en.menu.main]]
+#         weight = 5
+#         identifier = "about"
+#         pre = ""
+#         post = ""
+#         name = "About"
+#         url = "/about/"
+#         title = ""
+
