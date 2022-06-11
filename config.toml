@@ -166,6 +166,10 @@ paginate = 12
     # whether to show the full text content in RSS
     rssFullText = false
 
+    [params.page.share]
+      enable = false
+
+
 [languages]
   [languages.en]
     weight = 1
@@ -180,6 +184,14 @@ paginate = 12
         post = ""
         name = "Posts"
         url = "/posts/"
+        title = ""
+      [[languages.en.menu.main]]
+        weight = 2
+        identifier = "tags"
+        pre = ""
+        post = ""
+        name = "Tags"
+        url = "/tags/"
         title = ""
      [[languages.en.menu.main]]
         weight = 5
