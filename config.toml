@@ -13,7 +13,6 @@ paginate = 12
   link = ""
 
 
-
 [params]
   # site default theme ["auto", "light", "dark"]
   defaultTheme = "dark"
@@ -23,7 +22,6 @@ paginate = 12
   # ["sha256", "sha384", "sha512", "md5"]
   fingerprint = ""
   # date format
-  # 日期格式
   dateFormat = "2006-01-02"
   # website title for Open Graph and Twitter Cards
   title = "Josu Gorostegui blog"
@@ -52,7 +50,7 @@ paginate = 12
       # you can add extra information after the name (HTML format is supported), such as icons
       post = ""
       # whether to use typeit animation for title name
-      typeit = false
+      typeit = true
 
 [params.footer]
   enable = true

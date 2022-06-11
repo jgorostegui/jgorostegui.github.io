@@ -8,7 +8,10 @@ images: []
 
 resources:
 - name: "featured-image"
-  src: "featured-image.jpg"
+  src: "mlops_pipeline_diagram.png"
+- name: "featured-image-preview"
+  src: "mlops_pipeline_diagram_preview.png"
+
 
 lightgallery: true
 
