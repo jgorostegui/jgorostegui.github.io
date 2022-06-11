@@ -2,8 +2,15 @@
 title: "MLOps (Machine Learning Operations), my take on the consolidation of this field"
 date: 2022-06-06T01:24:32+02:00
 draft: false
-
 toc: false
+
+images: []
+
+resources:
+- name: "featured-image"
+  src: "featured-image.jpg"
+
+lightgallery: true
 
 tags: ["ML", "MLOps", "Machine Learning", "AI", "Software", "DevOps"]
 
