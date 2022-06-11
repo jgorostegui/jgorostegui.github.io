@@ -105,7 +105,7 @@ paginate = 12
 
   # Search config
   [params.search]
-    enable = false
+    enable = true
     # type of search engine ["lunr", "algolia"]
     type = "lunr"
     # max index length of the chunked content
@@ -158,20 +158,48 @@ paginate = 12
     GitHub = "https://github.com/jgorostegui"
     Linkedin = "https://www.linkedin.com/in/josugorostegui"
     Medium = "https://medium.com/@jgorostegui/about"
-    
-# [languages]
-#   [languages.en]
-#     weight = 1
-#     languageCode = "en"
-#     languageName = "English"
-#     hasCJKLanguage = false
 
-#      [[languages.en.menu.main]]
-#         weight = 5
-#         identifier = "about"
-#         pre = ""
-#         post = ""
-#         name = "About"
-#         url = "/about/"
-#         title = ""
 
+  [params.page]
+    # whether to hide a page from home page
+    hiddenFromHomePage = false
+    # whether to hide a page from search results
+    hiddenFromSearch = false
+    # whether to enable twemoji
+    twemoji = false
+    # whether to enable lightgallery
+    lightgallery = false
+    # whether to enable the ruby extended syntax
+    ruby = true
+    # whether to enable the fraction extended syntax
+    fraction = true
+    # whether to enable the fontawesome extended syntax
+    fontawesome = true
+    # whether to show link to Raw Markdown content of the content
+    linkToMarkdown = true
+    # whether to show the full text content in RSS
+    rssFullText = false
+
+[languages]
+  [languages.en]
+    weight = 1
+    languageCode = "en"
+    languageName = "English"
+    hasCJKLanguage = false
+
+     [[languages.en.menu.main]]
+        weight = 5
+        identifier = "about"
+        pre = ""
+        post = ""
+        name = "About"
+        url = "/about/"
+        title = ""
+      [[languages.en.menu.main]]
+        weight = 6
+        identifier = "github"
+        pre = "<i class='fab fa-github fa-fw' aria-hidden='true'></i>"
+        post = ""
+        name = ""
+        url = "https://github.com/jgorostegui/jgorostegui.github.io"
+        title = "GitHub"
