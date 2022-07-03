@@ -139,9 +139,9 @@ paginate = 12
       paginate = 6
 
   [params.social]
-    GitHub = "https://github.com/jgorostegui"
-    Linkedin = "https://www.linkedin.com/in/josugorostegui"
-    Medium = "https://medium.com/@jgorostegui/about"
+    GitHub = "jgorostegui"
+    Linkedin = "josugorostegui"
+    Medium = "@jgorostegui/about"
 
 
   [params.page]
