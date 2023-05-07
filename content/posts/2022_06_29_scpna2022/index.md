@@ -3,17 +3,13 @@ title: "Pamplona Software Crafters 2022 y el coste basal del código"
 date: 2022-06-29T00:00:00+00:00
 draft: false
 toc: false
-
 resources:
 - name: "featured-image"
   src: "scpna_banner.jpeg"
 - name: "featured-image-preview"
   src: "scpna_banner.jpeg"
-
 lightgallery: true
-
 tags: ["software", "Conference"]
-
 ---
 
 Después de dos años sin [Pamplona Software Crafters](https://pamplonaswcraft.com/), tocaba un evento por todo lo alto. Las ganas eran enormes, sobre todo para ir volviendo a esa normalidad de acudir a ferias y eventos, que es sin duda una costumbre saludable. Cada evento para con su fin, dicho sea de paso. 

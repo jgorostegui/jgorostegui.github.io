@@ -50,7 +50,7 @@ paginate = 12
       # you can add extra information after the name (HTML format is supported), such as icons
       post = ""
       # whether to use typeit animation for title name
-      typeit = true
+      typeit = false
 
 [params.footer]
   enable = true
@@ -125,9 +125,9 @@ paginate = 12
       # title shown in home page (HTML format is supported)
       title = ""
       # subtitle shown in home page (HTML format is supported)
-      subtitle = "AI, Software Engineering, Technology, etc."
+      subtitle = "Artificial Intelligence, Software Engineering, Machine Learning, Technology, etc."
       # whether to use typeit animation for subtitle
-      typeit = true
+      typeit = false
       # whether to show social links
       social = true
       # disclaimer (HTML format is supported)
@@ -140,9 +140,10 @@ paginate = 12
 
   [params.social]
     GitHub = "jgorostegui"
-    Linkedin = "josugorostegui"
-    Medium = "@jgorostegui/about"
-
+    Twitter = "@josu_goros"
+    Linkedin = "josugorostegui/"
+    Medium = "@jgorostegui"
+    Substack = "jgorostegui"
 
   [params.page]
     # whether to hide a page from home page
@@ -190,6 +191,14 @@ paginate = 12
         post = ""
         name = "Tags"
         url = "/tags/"
+        title = ""
+     [[languages.en.menu.main]]
+        weight = 5
+        identifier = "about"
+        pre = ""
+        post = ""
+        name = "About"
+        url = "/about/"
         title = ""
      [[languages.en.menu.main]]
         weight = 5
