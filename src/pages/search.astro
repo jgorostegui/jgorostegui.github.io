@@ -1,0 +1,26 @@
+---
+import Breadcrumbs from '@/components/breadcrumbs.astro'
+import PageHead from '@/components/page-head.astro'
+import SearchPage from '@/components/SearchPage'
+import Layout from '@/layouts/layout.astro'
+---
+
+<Layout class="max-w-3xl">
+  <PageHead
+    slot="head"
+    title="Search"
+    description="Full-text search of the blog"
+    noindex
+  />
+  <Breadcrumbs items={[{ label: 'Search', icon: 'lucide:search' }]} />
+  <section class="flex flex-col gap-6">
+    <div>
+      <h1 class="text-3xl font-medium">Search</h1>
+      <p class="text-muted-foreground mt-2 text-sm">
+        Full-text search across every blog post. Results are powered by
+        Pagefind - no server round-trips.
+      </p>
+    </div>
+    <SearchPage client:load />
+  </section>
+</Layout>

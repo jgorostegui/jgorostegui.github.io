@@ -1,0 +1,65 @@
+---
+import Analytics from '@/components/analytics.astro'
+import SchemaMarkup from '@/components/schema-markup.astro'
+import { SITE } from '@/consts'
+import { websiteSchema } from '@/lib/schema'
+import { ClientRouter } from 'astro:transitions'
+import Favicons from './favicons.astro'
+
+// WebSite schema ships on every page so any indexed page can drive the
+// SearchAction hint. Astro.site is guaranteed non-null because
+// astro.config.ts sets `site:`.
+const siteUrl = Astro.site!
+const website = websiteSchema(siteUrl)
+---
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=yes"
+  />
+  <meta name="generator" content={Astro.generator} />
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta
+    name="format-detection"
+    content="telephone=no,date=no,address=no,email=no,url=no"
+  />
+
+  <meta
+    name="theme-color"
+    content="#121212"
+    media="(prefers-color-scheme: dark)"
+  />
+  <meta
+    name="theme-color"
+    content="#121212"
+    media="(prefers-color-scheme: light)"
+  />
+
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title={SITE.title}
+    href={new URL('rss.xml', Astro.site)}
+  />
+
+  <!-- Preload fonts to prevent FOUT -->
+  <link rel="preload" href="/fonts/GeistVF.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/JetBrainsMonoVF.woff2" as="font" type="font/woff2" crossorigin />
+
+  <Favicons />
+  <ClientRouter />
+
+  <SchemaMarkup schema={website} />
+  <Analytics />
+
+  <slot />
+</head>

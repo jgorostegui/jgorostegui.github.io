@@ -1,0 +1,92 @@
+---
+import SchemaMarkup from '@/components/schema-markup.astro'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+import { breadcrumbListSchema, type BreadcrumbEntry } from '@/lib/schema'
+import { Icon } from 'astro-icon/components'
+
+export interface BreadcrumbItem {
+  href?: string
+  label: string
+  icon?: string
+}
+
+interface Props {
+  items: BreadcrumbItem[]
+}
+
+const { items } = Astro.props
+
+// Build the JSON-LD breadcrumb trail alongside the visual one.
+//
+// Two notes on resolving URLs:
+//   1. The home link is always position 1 ("Home" + site root).
+//   2. The final item often has no `href` because it represents the
+//      current page. We use `Astro.url` for that leaf node since the
+//      user is, by definition, on it right now. Non-leaf items without
+//      an href are dropped from the schema (invalid) but kept visually.
+const siteUrl = Astro.site!
+const trail: BreadcrumbEntry[] = [
+  { name: 'Home', url: siteUrl },
+  ...items
+    .map((item, index): BreadcrumbEntry | null => {
+      const isLast = index === items.length - 1
+      if (item.href) {
+        return { name: item.label, url: new URL(item.href, siteUrl) }
+      }
+      if (isLast) {
+        return { name: item.label, url: Astro.url }
+      }
+      return null
+    })
+    .filter((entry): entry is BreadcrumbEntry => entry !== null),
+]
+const breadcrumbList = breadcrumbListSchema(trail)
+---
+
+<SchemaMarkup schema={breadcrumbList} />
+
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">
+        <Icon name="lucide:home" class="size-4 shrink-0" />
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+    {
+      items.map((item, index) => (
+        <>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            {index === items.length - 1 ? (
+              <BreadcrumbPage>
+                <span class="flex items-center gap-x-2">
+                  {item.icon && (
+                    <Icon name={item.icon} class="size-4 shrink-0" />
+                  )}
+                  <span>{item.label}</span>
+                </span>
+              </BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink href={item.href}>
+                <span class="flex items-center gap-x-2">
+                  {item.icon && (
+                    <Icon name={item.icon} class="size-4 shrink-0" />
+                  )}
+                  <span>{item.label}</span>
+                </span>
+              </BreadcrumbLink>
+            )}
+          </BreadcrumbItem>
+        </>
+      ))
+    }
+  </BreadcrumbList>
+</Breadcrumb>

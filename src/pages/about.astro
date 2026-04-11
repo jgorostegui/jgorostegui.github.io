@@ -1,0 +1,30 @@
+---
+import Breadcrumbs from '@/components/breadcrumbs.astro'
+import Link from '@/components/link.astro'
+import PageHead from '@/components/page-head.astro'
+import Layout from '@/layouts/layout.astro'
+---
+
+<Layout class="max-w-3xl">
+  <PageHead slot="head" title="About" person />
+  <Breadcrumbs items={[{ label: 'About', icon: 'lucide:info' }]} />
+
+  <section>
+    <div class="min-w-full">
+      <div class="prose mb-8">
+        <p class="mt-0">
+          Software Engineer. Generalist. Machine Learning.
+        </p>
+        <p>
+          Notes on software engineering, machine learning, systems, and architecture.
+        </p>
+        <p>
+          Find me on <Link href="https://github.com/jgorostegui" external underline>GitHub</Link>,
+          <Link href="https://linkedin.com/in/josugorostegui" external underline>LinkedIn</Link>,
+          <Link href="https://jgorostegui.medium.com" external underline>Medium</Link>, and
+          <Link href="https://jgorostegui.substack.com" external underline>Substack</Link>.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>

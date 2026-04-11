@@ -1,1 +1,13 @@
-*.lock
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+
+# Local-only scratch / backup directories (_content_hugo, __drafts, etc.)
+_*
+__drafts/
+
+# Claude Code project instructions (workspace-local, not part of the theme)
+CLAUDE.md

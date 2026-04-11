@@ -1,0 +1,55 @@
+---
+import SchemaMarkup from '@/components/schema-markup.astro'
+import { FEATURES, SITE } from '@/consts'
+import { personSchema } from '@/lib/schema'
+
+interface Props {
+  title?: string
+  description?: string
+  noindex?: boolean
+  /**
+   * Emit Person JSON-LD on this page. Intended for the about page,
+   * which is the canonical location for the author's structured data.
+   */
+  person?: boolean
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  noindex = false,
+  person = false,
+} = Astro.props
+
+// Non-post pages share a single dynamic "default" OG card emitted by
+// the /og/[...slug].png endpoint. When ENABLE_OG_IMAGES is off, the
+// endpoint emits nothing and we suppress the meta tags entirely rather
+// than link to a 404.
+const ogImage = FEATURES.ogImages.enabled
+  ? new URL('/og/default.png', Astro.site)
+  : null
+
+const personLd = person ? personSchema(Astro.site!) : null
+---
+
+<title>{`${title} | ${SITE.title}`}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={Astro.url} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+{ogImage && <meta property="og:image:alt" content={title} />}
+<meta property="og:type" content="website" />
+<meta property="og:locale" content={SITE.locale} />
+<meta property="og:site_name" content={SITE.title} />
+<meta property="og:url" content={Astro.url} />
+
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+{ogImage && <meta name="twitter:image:alt" content={title} />}
+<meta name="twitter:card" content="summary_large_image" />
+
+{personLd && <SchemaMarkup schema={personLd} />}

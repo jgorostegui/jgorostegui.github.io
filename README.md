@@ -1,12 +1,4 @@
-# jgorostegui.github.io
+# Josu Gorostegui
 
-My personal blog
-
-* Website: https://jgorostegui.github.io/
-* Hugo Theme: https://github.com/dillonzq/LoveIt
-
-## To build locally
-
-```bash
-hugo serve --disableFastRender
-```
+My personal blog. Writing about artificial intelligence, software engineering,
+machine learning, and the system design underneath practical AI work.

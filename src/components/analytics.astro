@@ -1,0 +1,55 @@
+---
+/**
+ * Cloudflare Web Analytics beacon injector.
+ *
+ * Conditionally renders a single <script> tag that loads the Cloudflare
+ * beacon. Gated on the presence of PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN -
+ * when the env var is unset or empty, this component renders nothing,
+ * so local dev and deploys-without-analytics are a no-op (no 404s, no
+ * network requests, no console noise).
+ *
+ * ### Why JS Beacon and not HTTP mode
+ *
+ * JS Beacon works with `jgorostegui.github.io` as-is, no custom domain
+ * required. HTTP mode (server-side, fully unblockable) needs the domain
+ * to sit behind the Cloudflare proxy, which is a future upgrade.
+ *
+ * Trade-off: ~10-20% of a tech audience will block the beacon at the
+ * ad-blocker level. That's the cost of simplicity until we move to a
+ * custom domain. Umami (P3) is the more blocker-resistant alternative.
+ *
+ * ### SPA mode
+ *
+ * `spa: true` tells the beacon to hook the History API so Astro view
+ * transitions (pushState/replaceState under the hood via ClientRouter)
+ * are captured as distinct pageviews. Without it we'd only see the
+ * initial full-page load and every subsequent in-session navigation
+ * would be invisible.
+ *
+ * ### Privacy
+ *
+ * Cloudflare Web Analytics is cookie-free and GDPR-compliant out of
+ * the box. It collects aggregate pageview counts, referrers, and
+ * device class - no personal data, no cross-site tracking. No consent
+ * banner or privacy policy page required for a personal blog.
+ */
+
+const token = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN
+
+// Only compute the config if we're actually going to render - avoids
+// leaking a bogus placeholder into the HTML when the token is unset.
+const beaconConfig = token
+  ? JSON.stringify({ token, spa: true })
+  : null
+---
+
+{
+  beaconConfig && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={beaconConfig}
+    />
+  )
+}

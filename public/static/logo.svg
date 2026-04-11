@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    JG monogram. Bold monospace letterforms, fixed mid-grey (#888) so it
+    remains visible on both the light and dark themes. The SVG is served
+    as <img src="..."> by Astro's Image component (not inlined), so
+    currentColor can't be used — a fixed color is the simplest path.
+    -->
+  <text
+    x="256"
+    y="256"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace"
+    font-weight="800"
+    font-size="340"
+    letter-spacing="-10"
+    fill="#888888"
+  >JG</text>
+</svg>

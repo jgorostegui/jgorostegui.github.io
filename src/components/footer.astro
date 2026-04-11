@@ -1,0 +1,32 @@
+---
+import { SITE, SOCIAL_LINKS } from '@/consts'
+import { GIT_COMMIT, GIT_COMMIT_URL } from '@/lib/git'
+import SocialIcons from './social-icons.astro'
+---
+
+<footer
+  class="mx-auto mb-8 flex w-full max-w-3xl flex-col items-center justify-center gap-y-2 px-4 sm:mb-4 sm:flex-row sm:justify-between"
+>
+  <div
+    class="text-muted-foreground flex flex-wrap items-center justify-center gap-x-2 text-center text-sm"
+  >
+    <span>&copy; {new Date().getFullYear()} {SITE.title}</span>
+    {
+      GIT_COMMIT && GIT_COMMIT_URL && (
+        <>
+          <span class="text-muted-foreground/50">·</span>
+          <a
+            href={GIT_COMMIT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-foreground font-mono transition-colors"
+            aria-label={`View commit ${GIT_COMMIT} on GitHub`}
+          >
+            {GIT_COMMIT}
+          </a>
+        </>
+      )
+    }
+  </div>
+  <SocialIcons links={SOCIAL_LINKS} />
+</footer>

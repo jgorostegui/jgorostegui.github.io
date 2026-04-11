@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!--
+    Favicon: JG monogram on a dark square.
+    Rendered at 16-32px in browser tabs — a solid background box is the
+    only reliable way to stay visible on every tab theme (Chrome light,
+    Chrome dark, Safari tabs, etc.). Letters are bright white so they
+    read against the dark fill even at 16x16.
+    -->
+  <rect width="512" height="512" rx="96" fill="#0a0a0a"/>
+  <text
+    x="256"
+    y="256"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace"
+    font-weight="800"
+    font-size="300"
+    letter-spacing="-8"
+    fill="#fafafa"
+  >JG</text>
+</svg>

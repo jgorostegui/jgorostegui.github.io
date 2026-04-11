@@ -1,0 +1,23 @@
+---
+/**
+ * Emits a single JSON-LD script tag.
+ *
+ * Use this wrapper instead of inlining <script type="application/ld+json">
+ * in page templates - it centralizes the serialization and the `set:html`
+ * escape-hatch so a future audit only has to look in one place.
+ *
+ * JSON.stringify is safe here because the builder functions in
+ * src/lib/schema.ts produce plain objects with no function values or
+ * circular references. `set:html` is required because Astro's default
+ * interpolation would HTML-escape the braces and quotes.
+ */
+
+interface Props {
+  schema: Record<string, unknown>
+}
+
+const { schema } = Astro.props
+const json = JSON.stringify(schema)
+---
+
+<script type="application/ld+json" set:html={json} is:inline />
