@@ -28,8 +28,8 @@ export default function MobileNav({ links, className }: MobileNavProps) {
       <DropdownMenu.Trigger
         aria-label="Open navigation menu"
         className={cn(
-          'hover:bg-muted hover:text-foreground dark:hover:bg-muted/50',
-          'inline-flex size-9 items-center justify-center rounded-md',
+          'text-foreground/70 hover:text-foreground',
+          'inline-flex size-8 items-center justify-center rounded-md',
           'transition-colors outline-none',
           'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
           className,

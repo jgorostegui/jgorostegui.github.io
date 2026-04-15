@@ -8,21 +8,41 @@ import { Icon } from 'astro-icon/components'
   variant="ghost"
   size="icon"
   title="Toggle theme"
-  className="-my-2 -me-2 size-8"
+  className="header-pill size-8"
 >
-  <Icon name="lucide:sun" class="size-4 theme-icon-light" />
-  <Icon name="lucide:moon" class="absolute size-4 theme-icon-dark" />
-  <svg class="absolute size-4 theme-icon-cyber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+  <Icon name="lucide:sun" class="theme-icon-light size-4" />
+  <Icon name="lucide:moon" class="theme-icon-dark absolute size-4" />
+  <svg
+    class="theme-icon-cyber absolute size-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
   </svg>
   <span class="sr-only">Toggle theme</span>
 </Button>
 
 <style>
-  .theme-icon-light, .theme-icon-dark, .theme-icon-cyber { display: none; }
-  :root[data-theme='light'] .theme-icon-light { display: block; }
-  :root[data-theme='dark'] .theme-icon-dark { display: block; }
-  :root[data-theme='cyberpunk'] .theme-icon-cyber { display: block; color: #00f0ff; filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.5)); }
+  .theme-icon-light,
+  .theme-icon-dark,
+  .theme-icon-cyber {
+    display: none;
+  }
+  :root[data-theme='light'] .theme-icon-light {
+    display: block;
+  }
+  :root[data-theme='dark'] .theme-icon-dark {
+    display: block;
+  }
+  :root[data-theme='cyberpunk'] .theme-icon-cyber {
+    display: block;
+    color: #00f0ff;
+    filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.5));
+  }
 </style>
 
 <script is:inline data-astro-rerun>

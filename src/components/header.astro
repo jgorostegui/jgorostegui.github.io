@@ -12,6 +12,12 @@ import logo from '../../public/static/logo.svg'
 // the desktop nav renders at every width and no hamburger appears.
 const mobileNavEnabled = FEATURES.mobileNav.enabled
 const searchEnabled = FEATURES.search.enabled
+
+function normalizePath(path: string): string {
+  return path.length > 1 ? path.replace(/\/+$/, '') : path
+}
+
+const currentPath = normalizePath(Astro.url.pathname)
 ---
 
 <div>
@@ -33,23 +39,40 @@ const searchEnabled = FEATURES.search.enabled
         ]}
       >
         {
-          NAV_LINKS.map((item) => (
-            <Link
-              href={item.href}
-              class="text-foreground/60 hover:text-foreground capitalize transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))
+          NAV_LINKS.map((item) =>
+            (() => {
+              const targetPath = normalizePath(item.href)
+              const isActive =
+                targetPath === '/blog'
+                  ? currentPath === targetPath ||
+                    currentPath.startsWith(`${targetPath}/`)
+                  : currentPath === targetPath
+
+              return (
+                <Link
+                  href={item.href}
+                  aria-current={isActive ? 'page' : undefined}
+                  class:list={[
+                    'header-pill px-2.5 py-1 text-sm capitalize',
+                    isActive
+                      ? 'header-pill-active text-foreground'
+                      : 'text-foreground/60 hover:text-foreground',
+                  ]}
+                >
+                  {item.label}
+                </Link>
+              )
+            })(),
+          )
         }
       </nav>
-      {searchEnabled && <SearchButton client:idle />}
+      {searchEnabled && <SearchButton client:idle className="header-pill" />}
       {
         mobileNavEnabled && (
           <MobileNav
             client:idle
             links={NAV_LINKS}
-            className="sm:hidden"
+            className="header-pill sm:hidden"
           />
         )
       }
