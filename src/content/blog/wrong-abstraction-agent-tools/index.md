@@ -1,7 +1,7 @@
 ---
 title: "The cost of the wrong abstraction in agent tools: using Notion as a case study"
 date: 2026-04-13
-description: "Why agents get expensive when tools expose implementation details instead of workflows, and what a Notion case study shows about turns, context replay, and cost."
+description: "Notion Agent CLI: a Claude Code benchmark against the official Notion MCP, showing how task-level tools reduce agent turns, context drag, and cost."
 tags: ["AI Agents", "Context Engineering", "Claude Code", "MCP", "Benchmarks", "Notion"]
 authors: ["josu-gorostegui"]
 ---
