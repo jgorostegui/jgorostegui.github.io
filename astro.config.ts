@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
 import icon from 'astro-icon'
+import mermaid from 'astro-mermaid'
 
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
 import rehypeExpressiveCode from 'rehype-expressive-code'
@@ -21,7 +22,13 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   site: 'https://jgorostegui.github.io',
-  integrations: [mdx(), react(), sitemap(), icon()],
+  integrations: [
+    mermaid({ theme: 'default', autoTheme: true }),
+    mdx(),
+    react(),
+    sitemap(),
+    icon(),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

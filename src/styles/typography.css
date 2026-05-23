@@ -139,8 +139,16 @@
       @apply mx-auto my-6;
     }
 
-    :where(pre):not(:where(.not-prose, .not-prose *)) {
+    :where(pre:not(.mermaid)):not(:where(.not-prose, .not-prose *)) {
       @apply max-h-[min(68vh,1000px)]! overflow-y-auto [&::-webkit-scrollbar-corner]:hidden;
+    }
+
+    :where(pre.mermaid):not(:where(.not-prose, .not-prose *)) {
+      @apply my-6 flex max-h-none! justify-center overflow-visible! border-0 bg-transparent p-0;
+    }
+
+    :where(pre.mermaid svg):not(:where(.not-prose, .not-prose *)) {
+      @apply h-auto max-w-full;
     }
 
     :where(summary):not(:where(.not-prose, .not-prose *)) {
