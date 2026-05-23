@@ -32,3 +32,10 @@ bun run prettier # Format TypeScript, CSS, and Astro files
 
 `bun run build` writes the generated site to `dist/` and runs the postbuild
 tasks, including the Pagefind search index when search is enabled.
+
+## Credits
+
+This site is based on [Astro Erudite](https://github.com/jktrn/astro-erudite)
+by [@jktrn](https://github.com/jktrn). Additional inspiration drawn from
+[merox-erudite](https://github.com/meroxdotdev/merox-erudite) by
+[merox.dev](https://merox.dev/), an enhanced fork of the base theme.
