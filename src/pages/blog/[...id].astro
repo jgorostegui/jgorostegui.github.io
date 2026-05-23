@@ -129,6 +129,14 @@ const tocSections = await getTOCSections(currentPostId)
           {post.data.title}
         </h1>
 
+        {
+          (post.data.subtitle || post.data.description) && (
+            <p class="text-muted-foreground mb-4 text-base italic sm:text-lg">
+              {post.data.subtitle || post.data.description}
+            </p>
+          )
+        }
+
         <div
           class="text-muted-foreground divide-border mb-4 flex flex-col items-center justify-center divide-y text-xs sm:flex-row sm:flex-wrap sm:divide-x sm:divide-y-0 sm:text-sm"
         >
