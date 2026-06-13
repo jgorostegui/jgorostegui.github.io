@@ -63,7 +63,7 @@
     }
 
     :where(a):not(:where(.not-prose, .not-prose *)) {
-      @apply text-foreground decoration-muted-foreground hover:decoration-foreground font-medium wrap-break-word underline underline-offset-[3px] transition-colors;
+      @apply text-link decoration-link/40 hover:decoration-link font-medium wrap-break-word underline underline-offset-[3px] transition-colors;
     }
 
     :where(strong):not(:where(.not-prose, .not-prose *)) {
