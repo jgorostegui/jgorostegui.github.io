@@ -40,16 +40,16 @@ export default function SearchDialog({
     'idle' | 'loading' | 'searching' | 'error'
   >('idle')
   const [errorMsg, setErrorMsg] = useState('')
-  const pagefindRef = useRef<PagefindAPI | null>(null)
+  const [pagefind, setPagefind] = useState<PagefindAPI | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Lazy-load Pagefind the first time the dialog opens.
   useEffect(() => {
-    if (!open || pagefindRef.current) return
+    if (!open || pagefind) return
     setStatus('loading')
     loadPagefind()
       .then((mod) => {
-        pagefindRef.current = mod
+        setPagefind(mod)
         setStatus('idle')
       })
       .catch((err) => {
@@ -59,7 +59,7 @@ export default function SearchDialog({
           'Search index not found. The index is generated at build time - try a production build.',
         )
       })
-  }, [open])
+  }, [open, pagefind])
 
   // Reset transient state when the dialog closes so the next open is fresh.
   useEffect(() => {
@@ -72,8 +72,7 @@ export default function SearchDialog({
   // Debounced search. Cancels stale in-flight requests via a `cancelled` flag
   // so out-of-order responses can't overwrite a newer query's results.
   useEffect(() => {
-    const pf = pagefindRef.current
-    if (!pf) return
+    if (!pagefind) return
     if (!query.trim()) {
       setResults([])
       return
@@ -83,7 +82,7 @@ export default function SearchDialog({
     setStatus('searching')
     const handle = window.setTimeout(async () => {
       try {
-        const response = await pf.search(query)
+        const response = await pagefind.search(query)
         const resolved = await resolveResults(response, MAX_RESULTS)
         if (cancelled) return
         setResults(resolved)
@@ -100,15 +99,13 @@ export default function SearchDialog({
       cancelled = true
       window.clearTimeout(handle)
     }
-  }, [query])
+  }, [query, pagefind])
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay
-          className={cn(
-            'fixed inset-0 z-50 bg-black/40 backdrop-blur-sm',
-          )}
+          className={cn('fixed inset-0 z-50 bg-black/40 backdrop-blur-sm')}
         />
         <Dialog.Content
           onOpenAutoFocus={(e) => {
@@ -117,7 +114,7 @@ export default function SearchDialog({
           }}
           className={cn(
             'bg-background text-foreground fixed top-[20%] left-1/2 z-50',
-            '-translate-x-1/2 w-[min(32rem,calc(100vw-2rem))]',
+            'w-[min(32rem,calc(100vw-2rem))] -translate-x-1/2',
             'rounded-lg border shadow-xl',
           )}
         >
@@ -170,9 +167,7 @@ function SearchResultsList({
   errorMsg,
 }: SearchResultsListProps) {
   if (status === 'error') {
-    return (
-      <p className="text-muted-foreground px-3 py-4 text-sm">{errorMsg}</p>
-    )
+    return <p className="text-muted-foreground px-3 py-4 text-sm">{errorMsg}</p>
   }
 
   if (status === 'loading') {
@@ -208,7 +203,7 @@ function SearchResultsList({
             className={cn(
               'hover:bg-muted focus:bg-muted',
               'flex flex-col gap-1 rounded-md px-3 py-2',
-              'outline-none transition-colors',
+              'transition-colors outline-none',
             )}
           >
             <span className="flex items-center gap-2 text-sm font-medium">

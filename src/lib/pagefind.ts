@@ -53,11 +53,11 @@ type PagefindModule = PagefindAPI & {
   createInstance?: (opts: Record<string, unknown>) => PagefindAPI
 }
 
+type PagefindImporter = () => Promise<PagefindModule>
+
 const PAGEFIND_WASM_INIT_WARNING =
   'using deprecated parameters for the initialization function; pass a single object instead'
 
-let cached: PagefindAPI | null = null
-let inFlight: Promise<PagefindAPI> | null = null
 let pagefindWarningFilterInstalled = false
 
 function installPagefindWarningFilter(): void {
@@ -78,39 +78,57 @@ function installPagefindWarningFilter(): void {
   }
 }
 
-/**
- * Lazy-load the Pagefind runtime. Caches the instance, so repeated calls
- * share the same module. The dynamic import path is a runtime string so
- * Vite does not try to resolve it at build time - Pagefind's assets are
- * generated *after* `astro build`, well outside the Vite graph.
- */
-export async function loadPagefind(): Promise<PagefindAPI> {
-  if (cached) return cached
-  if (inFlight) return inFlight
-
-  inFlight = (async () => {
-    installPagefindWarningFilter()
-
-    const path = '/pagefind/pagefind.js'
-    const mod = (await import(/* @vite-ignore */ path)) as PagefindModule
-    const api =
-      mod.createInstance?.({
-        baseUrl: '/',
-        excerptLength: 30,
-        noWorker: true,
-      }) ?? mod
-
-    if (!mod.createInstance) {
-      await api.options?.({ baseUrl: '/', excerptLength: 30 })
-    }
-
-    await api.init?.()
-    cached = api
-    return api
-  })()
-
-  return inFlight
+function importPagefindRuntime(): Promise<PagefindModule> {
+  const path = '/pagefind/pagefind.js'
+  return import(/* @vite-ignore */ path) as Promise<PagefindModule>
 }
+
+export function createPagefindLoader(
+  importRuntime: PagefindImporter = importPagefindRuntime,
+): () => Promise<PagefindAPI> {
+  let cached: PagefindAPI | null = null
+  let inFlight: Promise<PagefindAPI> | null = null
+
+  /**
+   * Lazy-load the Pagefind runtime. Caches the instance, so repeated calls
+   * share the same module. The dynamic import path is a runtime string so
+   * Vite does not try to resolve it at build time - Pagefind's assets are
+   * generated *after* `astro build`, well outside the Vite graph.
+   */
+  return async function loadPagefind(): Promise<PagefindAPI> {
+    if (cached) return cached
+    if (inFlight) return inFlight
+
+    inFlight = (async () => {
+      installPagefindWarningFilter()
+
+      const mod = await importRuntime()
+      const api =
+        mod.createInstance?.({
+          baseUrl: '/',
+          excerptLength: 30,
+          noWorker: true,
+        }) ?? mod
+
+      if (!mod.createInstance) {
+        await api.options?.({ baseUrl: '/', excerptLength: 30 })
+      }
+
+      await api.init?.()
+      cached = api
+      return api
+    })()
+
+    try {
+      return await inFlight
+    } catch (error) {
+      inFlight = null
+      throw error
+    }
+  }
+}
+
+export const loadPagefind = createPagefindLoader()
 
 /**
  * Resolve the top `limit` raw Pagefind results to their full data objects.

@@ -47,10 +47,56 @@ export default function SearchButton({ className }: SearchButtonProps) {
         <Search className="size-4" />
       </button>
       {open && (
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={<SearchDialogFallback onClose={() => setOpen(false)} />}
+        >
           <SearchDialog open={open} onOpenChange={setOpen} />
         </Suspense>
       )}
+    </>
+  )
+}
+
+function SearchDialogFallback({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="Close search"
+        className="fixed inset-0 z-50 cursor-default bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="search-loading-title"
+        className={cn(
+          'bg-background text-foreground fixed top-[20%] left-1/2 z-50',
+          'w-[min(32rem,calc(100vw-2rem))] -translate-x-1/2',
+          'rounded-lg border px-4 py-3 shadow-xl',
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <Search className="text-muted-foreground size-4 shrink-0" />
+          <p
+            id="search-loading-title"
+            className="text-muted-foreground text-sm"
+          >
+            Loading search...
+          </p>
+        </div>
+      </div>
     </>
   )
 }

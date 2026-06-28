@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "test": "bun test",
+    "test:site": "bun scripts/verify-site.ts",
     "build": "astro check && astro build && bun scripts/postbuild.ts",
     "preview": "astro preview",
     "astro": "astro",

@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type FocusEvent } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { SocialLink } from '@/types'
@@ -12,31 +12,36 @@ type MobileNavProps = {
 /**
  * Mobile navigation island.
  *
- * Renders a hamburger-icon trigger that opens a Radix DropdownMenu with
- * every site nav link. Intended to replace the inline desktop `<nav>` at
- * widths below the `sm:` breakpoint - the parent header is responsible
- * for hiding/showing this component vs the desktop nav via Tailwind
- * responsive classes.
+ * Renders a hamburger-icon trigger that opens a compact link list at widths
+ * below the `sm:` breakpoint.
  *
  * Hydration: the parent uses `client:media` so desktop viewports do not
  * hydrate this hidden mobile-only control.
  */
 export default function MobileNav({ links, className }: MobileNavProps) {
   const [open, setOpen] = useState(false)
-  const menuId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+
+  const close = (restoreFocus = false) => {
+    setOpen(false)
+
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => triggerRef.current?.focus())
+    }
+  }
 
   useEffect(() => {
     if (!open) return
 
     const handlePointerDown = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false)
+        close()
       }
     }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setOpen(false)
+        close(true)
       }
     }
 
@@ -48,13 +53,21 @@ export default function MobileNav({ links, className }: MobileNavProps) {
     }
   }, [open])
 
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const nextFocused = event.relatedTarget as Node | null
+    if (open && !event.currentTarget.contains(nextFocused)) {
+      close()
+    }
+  }
+
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative sm:hidden" onBlur={handleBlur}>
       <button
+        ref={triggerRef}
         type="button"
         aria-label="Open navigation menu"
         aria-expanded={open}
-        aria-controls={menuId}
+        aria-controls="mobile-navigation"
         onClick={() => setOpen((current) => !current)}
         className={cn(
           'text-foreground/70 hover:text-foreground',
@@ -68,9 +81,9 @@ export default function MobileNav({ links, className }: MobileNavProps) {
       </button>
 
       {open && (
-        <div
-          id={menuId}
-          role="menu"
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile navigation"
           className={cn(
             'bg-background text-foreground absolute top-full right-0 z-50 mt-2 min-w-[9rem]',
             'overflow-hidden rounded-md border p-1 shadow-md',
@@ -80,8 +93,7 @@ export default function MobileNav({ links, className }: MobileNavProps) {
             <a
               key={item.href}
               href={item.href}
-              role="menuitem"
-              onClick={() => setOpen(false)}
+              onClick={() => close()}
               className={cn(
                 'hover:bg-muted focus:bg-muted focus:text-foreground',
                 'block rounded-sm px-3 py-2 text-sm capitalize',
@@ -91,7 +103,7 @@ export default function MobileNav({ links, className }: MobileNavProps) {
               {item.label}
             </a>
           ))}
-        </div>
+        </nav>
       )}
     </div>
   )

@@ -1,29 +1,8 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content'
+import { createTagSummaries, slugifyTag, type TagSummary } from '@/lib/tags'
 import { readingTime, calculateWordCountFromHtml } from '@/lib/utils'
 
-export type TagSummary = {
-  tag: string
-  slug: string
-  count: number
-}
-
-export function slugifyTag(tag: string): string {
-  return tag
-    .trim()
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
-function getPreferredTagLabel(current: string, next: string): string {
-  if (current === current.toLowerCase() && next !== next.toLowerCase()) {
-    return next
-  }
-
-  return current
-}
+export { slugifyTag, type TagSummary }
 
 export async function getAllAuthors(): Promise<CollectionEntry<'authors'>[]> {
   return await getCollection('authors')
@@ -47,19 +26,7 @@ export async function getAllPostsAndSubposts(): Promise<
 
 export async function getAllTags(): Promise<Map<string, TagSummary>> {
   const posts = await getAllPosts()
-  return posts.reduce((acc, post) => {
-    post.data.tags?.forEach((tag) => {
-      const slug = slugifyTag(tag)
-      const current = acc.get(slug)
-
-      acc.set(slug, {
-        slug,
-        tag: current ? getPreferredTagLabel(current.tag, tag) : tag,
-        count: (current?.count || 0) + 1,
-      })
-    })
-    return acc
-  }, new Map<string, TagSummary>())
+  return createTagSummaries(posts.flatMap((post) => post.data.tags ?? []))
 }
 
 export async function getAdjacentPosts(currentId: string): Promise<{
