@@ -7,13 +7,13 @@ import { getAllTags, getPostsByTag } from '@/lib/data-utils'
 
 export async function getStaticPaths() {
   const tagMap = await getAllTags()
-  const uniqueTags = Array.from(tagMap.keys())
+  const uniqueTags = Array.from(tagMap.values())
 
   return Promise.all(
-    uniqueTags.map(async (tag) => {
-      const posts = await getPostsByTag(tag)
+    uniqueTags.map(async ({ tag, slug }) => {
+      const posts = await getPostsByTag(slug)
       return {
-        params: { id: tag },
+        params: { id: slug },
         props: {
           tag,
           posts,

@@ -1,6 +1,30 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content'
 import { readingTime, calculateWordCountFromHtml } from '@/lib/utils'
 
+export type TagSummary = {
+  tag: string
+  slug: string
+  count: number
+}
+
+export function slugifyTag(tag: string): string {
+  return tag
+    .trim()
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function getPreferredTagLabel(current: string, next: string): string {
+  if (current === current.toLowerCase() && next !== next.toLowerCase()) {
+    return next
+  }
+
+  return current
+}
+
 export async function getAllAuthors(): Promise<CollectionEntry<'authors'>[]> {
   return await getCollection('authors')
 }
@@ -21,14 +45,21 @@ export async function getAllPostsAndSubposts(): Promise<
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 }
 
-export async function getAllTags(): Promise<Map<string, number>> {
+export async function getAllTags(): Promise<Map<string, TagSummary>> {
   const posts = await getAllPosts()
   return posts.reduce((acc, post) => {
     post.data.tags?.forEach((tag) => {
-      acc.set(tag, (acc.get(tag) || 0) + 1)
+      const slug = slugifyTag(tag)
+      const current = acc.get(slug)
+
+      acc.set(slug, {
+        slug,
+        tag: current ? getPreferredTagLabel(current.tag, tag) : tag,
+        count: (current?.count || 0) + 1,
+      })
     })
     return acc
-  }, new Map<string, number>())
+  }, new Map<string, TagSummary>())
 }
 
 export async function getAdjacentPosts(currentId: string): Promise<{
@@ -98,10 +129,13 @@ export async function getPostsByAuthor(
 }
 
 export async function getPostsByTag(
-  tag: string,
+  tagSlug: string,
 ): Promise<CollectionEntry<'blog'>[]> {
   const posts = await getAllPosts()
-  return posts.filter((post) => post.data.tags?.includes(tag))
+  const slug = slugifyTag(tagSlug)
+  return posts.filter((post) =>
+    post.data.tags?.some((tag) => slugifyTag(tag) === slug),
+  )
 }
 
 export async function getRecentPosts(
@@ -111,16 +145,12 @@ export async function getRecentPosts(
   return posts.slice(0, count)
 }
 
-export async function getSortedTags(): Promise<
-  { tag: string; count: number }[]
-> {
+export async function getSortedTags(): Promise<TagSummary[]> {
   const tagCounts = await getAllTags()
-  return [...tagCounts.entries()]
-    .map(([tag, count]) => ({ tag, count }))
-    .sort((a, b) => {
-      const countDiff = b.count - a.count
-      return countDiff !== 0 ? countDiff : a.tag.localeCompare(b.tag)
-    })
+  return [...tagCounts.values()].sort((a, b) => {
+    const countDiff = b.count - a.count
+    return countDiff !== 0 ? countDiff : a.tag.localeCompare(b.tag)
+  })
 }
 
 export function getParentId(subpostId: string): string {

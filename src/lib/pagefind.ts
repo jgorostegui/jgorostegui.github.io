@@ -49,8 +49,34 @@ export type PagefindAPI = {
   options?: (opts: Record<string, unknown>) => Promise<void>
 }
 
+type PagefindModule = PagefindAPI & {
+  createInstance?: (opts: Record<string, unknown>) => PagefindAPI
+}
+
+const PAGEFIND_WASM_INIT_WARNING =
+  'using deprecated parameters for the initialization function; pass a single object instead'
+
 let cached: PagefindAPI | null = null
 let inFlight: Promise<PagefindAPI> | null = null
+let pagefindWarningFilterInstalled = false
+
+function installPagefindWarningFilter(): void {
+  if (pagefindWarningFilterInstalled) return
+  pagefindWarningFilterInstalled = true
+
+  const originalWarn = console.warn
+
+  console.warn = (...args: unknown[]) => {
+    const isPagefindWasmInitWarning = args.some(
+      (arg) =>
+        typeof arg === 'string' && arg.includes(PAGEFIND_WASM_INIT_WARNING),
+    )
+
+    if (!isPagefindWasmInitWarning) {
+      originalWarn(...args)
+    }
+  }
+}
 
 /**
  * Lazy-load the Pagefind runtime. Caches the instance, so repeated calls
@@ -63,12 +89,24 @@ export async function loadPagefind(): Promise<PagefindAPI> {
   if (inFlight) return inFlight
 
   inFlight = (async () => {
+    installPagefindWarningFilter()
+
     const path = '/pagefind/pagefind.js'
-    const mod = (await import(/* @vite-ignore */ path)) as PagefindAPI
-    await mod.options?.({ baseUrl: '/', excerptLength: 30 })
-    await mod.init?.()
-    cached = mod
-    return mod
+    const mod = (await import(/* @vite-ignore */ path)) as PagefindModule
+    const api =
+      mod.createInstance?.({
+        baseUrl: '/',
+        excerptLength: 30,
+        noWorker: true,
+      }) ?? mod
+
+    if (!mod.createInstance) {
+      await api.options?.({ baseUrl: '/', excerptLength: 30 })
+    }
+
+    await api.init?.()
+    cached = api
+    return api
   })()
 
   return inFlight

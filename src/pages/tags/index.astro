@@ -17,9 +17,9 @@ const sortedTags = await getSortedTags()
   <div class="flex flex-col gap-4">
     <div class="flex flex-wrap gap-2">
       {
-        sortedTags.map(({ tag, count }) => (
+        sortedTags.map(({ tag, slug, count }) => (
           <Link
-            href={`/tags/${tag}`}
+            href={`/tags/${slug}/`}
             class={badgeVariants({ variant: 'muted' })}
           >
             <Icon name="lucide:hash" class="size-3" />

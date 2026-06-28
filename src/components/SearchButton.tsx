@@ -1,12 +1,13 @@
 import { Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 
-import SearchDialog from '@/components/SearchDialog'
 import { cn } from '@/lib/utils'
 
 type SearchButtonProps = {
   className?: string
 }
+
+const SearchDialog = lazy(() => import('@/components/SearchDialog'))
 
 /**
  * Header search trigger.
@@ -45,7 +46,11 @@ export default function SearchButton({ className }: SearchButtonProps) {
       >
         <Search className="size-4" />
       </button>
-      <SearchDialog open={open} onOpenChange={setOpen} />
+      {open && (
+        <Suspense fallback={null}>
+          <SearchDialog open={open} onOpenChange={setOpen} />
+        </Suspense>
+      )}
     </>
   )
 }

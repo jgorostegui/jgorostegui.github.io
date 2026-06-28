@@ -6,15 +6,36 @@ interface Props {
   external?: boolean
   class?: string
   underline?: boolean
+  rel?: string
   [key: string]: any
 }
 
-const { href, external, class: className, underline, ...rest } = Astro.props
+const {
+  href,
+  external,
+  class: className,
+  underline,
+  rel,
+  ...rest
+} = Astro.props
+
+const relValue = external
+  ? Array.from(
+      new Set([
+        'noopener',
+        'noreferrer',
+        ...String(rel || '')
+          .split(/\s+/)
+          .filter(Boolean),
+      ]),
+    ).join(' ')
+  : rel
 ---
 
 <a
   href={href}
   target={external ? '_blank' : '_self'}
+  rel={relValue}
   class={cn(
     'inline-block transition-colors duration-300 ease-in-out',
     underline &&

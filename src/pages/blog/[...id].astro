@@ -22,6 +22,7 @@ import {
   hasSubposts,
   isSubpost,
   parseAuthors,
+  slugifyTag,
 } from '@/lib/data-utils'
 import { formatDate } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
@@ -207,7 +208,7 @@ const tocSections = await getTOCSections(currentPostId)
               post.data.tags.length > 0 &&
               post.data.tags.map((tag) => (
                 <a
-                  href={`/tags/${tag}`}
+                  href={`/tags/${slugifyTag(tag)}/`}
                   class={badgeVariants({ variant: 'muted' })}
                 >
                   <Icon name="lucide:hash" class="size-3" />

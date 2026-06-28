@@ -70,7 +70,7 @@ const currentPath = normalizePath(Astro.url.pathname)
       {
         mobileNavEnabled && (
           <MobileNav
-            client:idle
+            client:media="(max-width: 639px)"
             links={NAV_LINKS}
             className="header-pill sm:hidden"
           />

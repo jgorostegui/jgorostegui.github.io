@@ -2,11 +2,11 @@
 import BlogCard from '@/components/blog-card.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
+import StarField from '@/components/StarField'
 import { buttonVariants } from '@/components/ui/button'
 import { SITE } from '@/consts'
 import Layout from '@/layouts/layout.astro'
 import { getRecentPosts } from '@/lib/data-utils'
-import StarField from '@/components/StarField'
 
 const blog = await getRecentPosts(SITE.featuredPostCount)
 ---
@@ -34,7 +34,8 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
           <div class="hero-fade hero-delay-1 hero-command">$ whoami</div>
 
           <h1 class="hero-fade hero-delay-2 hero-name">
-            Josu Gorostegui<span class="cursor-blink" aria-hidden="true">_</span>
+            Josu Gorostegui<span class="cursor-blink" aria-hidden="true">_</span
+            >
           </h1>
 
           <p class="hero-fade hero-delay-3 hero-lede">
@@ -42,15 +43,29 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
           </p>
 
           <nav class="hero-fade hero-delay-5 hero-social">
-            <a href="https://github.com/jgorostegui" target="_blank">github</a>
-            <span>/</span>
-            <a href="https://twitter.com/josu_goros" target="_blank">twitter</a>
-            <span>/</span>
-            <a href="https://linkedin.com/in/josugorostegui" target="_blank"
-              >linkedin</a
+            <a
+              href="https://github.com/jgorostegui"
+              target="_blank"
+              rel="noopener noreferrer">github</a
             >
             <span>/</span>
-            <a href="https://jgorostegui.medium.com" target="_blank">medium</a>
+            <a
+              href="https://twitter.com/josu_goros"
+              target="_blank"
+              rel="noopener noreferrer">twitter</a
+            >
+            <span>/</span>
+            <a
+              href="https://linkedin.com/in/josugorostegui"
+              target="_blank"
+              rel="noopener noreferrer">linkedin</a
+            >
+            <span>/</span>
+            <a
+              href="https://jgorostegui.medium.com"
+              target="_blank"
+              rel="noopener noreferrer">medium</a
+            >
           </nav>
         </div>
       </div>
@@ -58,7 +73,7 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
   </section>
 
   <section class="hero-fade hero-delay-6 flex flex-col gap-y-4">
-    <h2 class="text-lg font-mono font-medium tracking-tight">Latest posts</h2>
+    <h2 class="font-mono text-lg font-medium tracking-tight">Latest posts</h2>
     <ul class="flex flex-col gap-y-4">
       {
         blog.map((post) => (
@@ -69,8 +84,12 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
       }
     </ul>
     <div class="flex justify-center">
-      <Link href="/blog" class={buttonVariants({ variant: 'ghost' }) + ' group'}>
-        See all posts <span class="ml-1.5 transition-transform group-hover:translate-x-1"
+      <Link
+        href="/blog"
+        class={buttonVariants({ variant: 'ghost' }) + ' group'}
+      >
+        See all posts <span
+          class="ml-1.5 transition-transform group-hover:translate-x-1"
           >&rarr;</span
         >
       </Link>
@@ -89,9 +108,30 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     background: var(--hero-bg, #000);
   }
 
-  :root { --hero-bg: var(--background, #fff); --hero-fg: var(--foreground, #111); --hero-muted: rgba(0,0,0,0.52); --hero-dim: rgba(0,0,0,0.38); --hero-faint: rgba(0,0,0,0.18); --hero-vig-tint: var(--background, #fff); }
-  :root[data-theme='dark'] { --hero-bg: #000; --hero-fg: #fff; --hero-muted: rgba(255,255,255,0.52); --hero-dim: rgba(255,255,255,0.4); --hero-faint: rgba(255,255,255,0.18); --hero-vig-tint: var(--background, #0d0d0d); }
-  :root[data-theme='cyberpunk'] { --hero-bg: #06060e; --hero-fg: #e0e4ff; --hero-muted: rgba(224,228,255,0.52); --hero-dim: rgba(0,240,255,0.5); --hero-faint: rgba(0,240,255,0.18); --hero-vig-tint: #0a0a14; }
+  :root {
+    --hero-bg: var(--background, #fff);
+    --hero-fg: var(--foreground, #111);
+    --hero-muted: rgba(0, 0, 0, 0.52);
+    --hero-dim: rgba(0, 0, 0, 0.38);
+    --hero-faint: rgba(0, 0, 0, 0.18);
+    --hero-vig-tint: var(--background, #fff);
+  }
+  :root[data-theme='dark'] {
+    --hero-bg: #000;
+    --hero-fg: #fff;
+    --hero-muted: rgba(255, 255, 255, 0.52);
+    --hero-dim: rgba(255, 255, 255, 0.4);
+    --hero-faint: rgba(255, 255, 255, 0.18);
+    --hero-vig-tint: var(--background, #0d0d0d);
+  }
+  :root[data-theme='cyberpunk'] {
+    --hero-bg: #06060e;
+    --hero-fg: #e0e4ff;
+    --hero-muted: rgba(224, 228, 255, 0.52);
+    --hero-dim: rgba(0, 240, 255, 0.5);
+    --hero-faint: rgba(0, 240, 255, 0.18);
+    --hero-vig-tint: #0a0a14;
+  }
 
   /* Stars handled by tsParticles StarField component */
 
@@ -99,15 +139,34 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(180deg, transparent 0%, transparent 60%, var(--hero-vig-tint) 100%);
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      transparent 60%,
+      var(--hero-vig-tint) 100%
+    );
     z-index: 2;
   }
 
   :root[data-theme='dark'] .hero-vignette {
     background:
-      radial-gradient(ellipse 36% 22% at 52% 20%, rgba(255, 255, 255, 0.045), transparent 72%),
-      linear-gradient(180deg, rgba(3, 4, 6, 0.14) 0%, transparent 24%, transparent 60%, var(--background, #0d0d0d) 100%),
-      radial-gradient(circle at 50% 14%, transparent 20%, rgba(3, 4, 6, 0.18) 100%);
+      radial-gradient(
+        ellipse 36% 22% at 52% 20%,
+        rgba(255, 255, 255, 0.045),
+        transparent 72%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(3, 4, 6, 0.14) 0%,
+        transparent 24%,
+        transparent 60%,
+        var(--background, #0d0d0d) 100%
+      ),
+      radial-gradient(
+        circle at 50% 14%,
+        transparent 20%,
+        rgba(3, 4, 6, 0.18) 100%
+      );
   }
 
   .hero-bottom-line {
@@ -203,9 +262,18 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     transform: translateY(-0.02rem);
   }
 
-  .hero-legend span:nth-child(1)::before { background: var(--hero-fg); opacity: 0.94; }
-  .hero-legend span:nth-child(2)::before { background: var(--hero-fg); opacity: 0.58; }
-  .hero-legend span:nth-child(3)::before { background: var(--hero-fg); opacity: 0.28; }
+  .hero-legend span:nth-child(1)::before {
+    background: var(--hero-fg);
+    opacity: 0.94;
+  }
+  .hero-legend span:nth-child(2)::before {
+    background: var(--hero-fg);
+    opacity: 0.58;
+  }
+  .hero-legend span:nth-child(3)::before {
+    background: var(--hero-fg);
+    opacity: 0.28;
+  }
 
   .hero-social {
     display: flex;
@@ -219,8 +287,12 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     text-transform: lowercase;
   }
 
-  .hero-social span { color: var(--hero-faint); }
-  .hero-social a:hover { color: var(--hero-fg); }
+  .hero-social span {
+    color: var(--hero-faint);
+  }
+  .hero-social a:hover {
+    color: var(--hero-fg);
+  }
 
   .hero-meteors {
     position: absolute;
@@ -256,24 +328,50 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     animation: fadeUp 0.6s ease-out forwards;
   }
 
-  .hero-delay-1 { animation-delay: 0.08s; }
-  .hero-delay-2 { animation-delay: 0.16s; }
-  .hero-delay-3 { animation-delay: 0.24s; }
-  .hero-delay-4 { animation-delay: 0.32s; }
-  .hero-delay-5 { animation-delay: 0.4s; }
-  .hero-delay-6 { animation-delay: 0.48s; }
-
+  .hero-delay-1 {
+    animation-delay: 0.08s;
+  }
+  .hero-delay-2 {
+    animation-delay: 0.16s;
+  }
+  .hero-delay-3 {
+    animation-delay: 0.24s;
+  }
+  .hero-delay-4 {
+    animation-delay: 0.32s;
+  }
+  .hero-delay-5 {
+    animation-delay: 0.4s;
+  }
+  .hero-delay-6 {
+    animation-delay: 0.48s;
+  }
 
   @keyframes cursorPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
   }
 
   @keyframes streak {
-    0% { translate: 0 200%; opacity: 0; }
-    20% { opacity: 1; }
-    80% { opacity: 0.5; }
-    100% { translate: 0 0; opacity: 0; }
+    0% {
+      translate: 0 200%;
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 0.5;
+    }
+    100% {
+      translate: 0 0;
+      opacity: 0;
+    }
   }
 
   :global(.streak) {
@@ -285,21 +383,43 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     animation: streak 2.5s ease-in-out forwards;
   }
 
-  :root :global(.streak) { filter: opacity(0.2); }
-  :root[data-theme='dark'] :global(.streak) { filter: none; }
+  :root :global(.streak) {
+    filter: opacity(0.2);
+  }
+  :root[data-theme='dark'] :global(.streak) {
+    filter: none;
+  }
 
   /* ── Cyberpunk hero effects ────────── */
   :root[data-theme='cyberpunk'] .hero-shell {
     background:
-      radial-gradient(ellipse 40% 30% at 30% 20%, rgba(0, 240, 255, 0.04), transparent),
-      radial-gradient(ellipse 35% 25% at 70% 70%, rgba(255, 45, 149, 0.03), transparent),
+      radial-gradient(
+        ellipse 40% 30% at 30% 20%,
+        rgba(0, 240, 255, 0.04),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 35% 25% at 70% 70%,
+        rgba(255, 45, 149, 0.03),
+        transparent
+      ),
       #06060e;
   }
 
   :root[data-theme='cyberpunk'] .hero-vignette {
     background:
-      linear-gradient(180deg, rgba(6,6,14,0.1) 0%, transparent 20%, transparent 55%, #0a0a14 100%),
-      radial-gradient(circle at 50% 14%, transparent 20%, rgba(6,6,14,0.2) 100%);
+      linear-gradient(
+        180deg,
+        rgba(6, 6, 14, 0.1) 0%,
+        transparent 20%,
+        transparent 55%,
+        #0a0a14 100%
+      ),
+      radial-gradient(
+        circle at 50% 14%,
+        transparent 20%,
+        rgba(6, 6, 14, 0.2) 100%
+      );
   }
 
   :root[data-theme='cyberpunk'] .hero-command {
@@ -309,18 +429,31 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
 
   :root[data-theme='cyberpunk'] .hero-name {
     color: #e0e4ff;
-    text-shadow: 0 0 30px rgba(0, 240, 255, 0.12), 0 0 60px rgba(0, 240, 255, 0.05);
+    text-shadow:
+      0 0 30px rgba(0, 240, 255, 0.12),
+      0 0 60px rgba(0, 240, 255, 0.05);
   }
 
   :root[data-theme='cyberpunk'] .cursor-blink {
     -webkit-text-fill-color: #00f0ff;
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 30px rgba(0, 240, 255, 0.2);
+    text-shadow:
+      0 0 10px rgba(0, 240, 255, 0.6),
+      0 0 30px rgba(0, 240, 255, 0.2);
     filter: none;
   }
 
-  :root[data-theme='cyberpunk'] .hero-legend span:nth-child(1)::before { background: #00f0ff; box-shadow: 0 0 4px rgba(0, 240, 255, 0.5); }
-  :root[data-theme='cyberpunk'] .hero-legend span:nth-child(2)::before { background: #ff2d95; box-shadow: 0 0 4px rgba(255, 45, 149, 0.4); }
-  :root[data-theme='cyberpunk'] .hero-legend span:nth-child(3)::before { background: #f0e040; box-shadow: 0 0 4px rgba(240, 224, 64, 0.3); }
+  :root[data-theme='cyberpunk'] .hero-legend span:nth-child(1)::before {
+    background: #00f0ff;
+    box-shadow: 0 0 4px rgba(0, 240, 255, 0.5);
+  }
+  :root[data-theme='cyberpunk'] .hero-legend span:nth-child(2)::before {
+    background: #ff2d95;
+    box-shadow: 0 0 4px rgba(255, 45, 149, 0.4);
+  }
+  :root[data-theme='cyberpunk'] .hero-legend span:nth-child(3)::before {
+    background: #f0e040;
+    box-shadow: 0 0 4px rgba(240, 224, 64, 0.3);
+  }
 
   :root[data-theme='cyberpunk'] .hero-social a:hover {
     color: #00f0ff;
@@ -333,12 +466,19 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
   }
 
   @keyframes neonShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 
   @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: 1fr; }
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 639px) {

@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react'
-import { DropdownMenu } from 'radix-ui'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { SocialLink } from '@/types'
@@ -18,15 +18,44 @@ type MobileNavProps = {
  * for hiding/showing this component vs the desktop nav via Tailwind
  * responsive classes.
  *
- * Hydration: `client:idle` is enough. Users on mobile are unlikely to
- * tap the menu within the first paint, so we let the main bundle settle
- * before initializing Radix.
+ * Hydration: the parent uses `client:media` so desktop viewports do not
+ * hydrate this hidden mobile-only control.
  */
 export default function MobileNav({ links, className }: MobileNavProps) {
+  const [open, setOpen] = useState(false)
+  const menuId = useId()
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [open])
+
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
         aria-label="Open navigation menu"
+        aria-expanded={open}
+        aria-controls={menuId}
+        onClick={() => setOpen((current) => !current)}
         className={cn(
           'text-foreground/70 hover:text-foreground',
           'inline-flex size-8 items-center justify-center rounded-md',
@@ -36,33 +65,34 @@ export default function MobileNav({ links, className }: MobileNavProps) {
         )}
       >
         <Menu className="size-4" />
-      </DropdownMenu.Trigger>
+      </button>
 
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          align="end"
-          sideOffset={8}
-          collisionPadding={16}
+      {open && (
+        <div
+          id={menuId}
+          role="menu"
           className={cn(
-            'bg-background text-foreground z-50 min-w-[9rem]',
+            'bg-background text-foreground absolute top-full right-0 z-50 mt-2 min-w-[9rem]',
             'overflow-hidden rounded-md border p-1 shadow-md',
           )}
         >
           {links.map((item) => (
-            <DropdownMenu.Item
+            <a
               key={item.href}
-              asChild
+              href={item.href}
+              role="menuitem"
+              onClick={() => setOpen(false)}
               className={cn(
-                'focus:bg-muted focus:text-foreground',
-                'cursor-pointer rounded-sm px-3 py-2 text-sm capitalize',
+                'hover:bg-muted focus:bg-muted focus:text-foreground',
+                'block rounded-sm px-3 py-2 text-sm capitalize',
                 'outline-none select-none',
               )}
             >
-              <a href={item.href}>{item.label}</a>
-            </DropdownMenu.Item>
+              {item.label}
+            </a>
           ))}
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+        </div>
+      )}
+    </div>
   )
 }
