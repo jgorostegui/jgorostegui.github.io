@@ -1,0 +1,123 @@
+/* Mermaid diagrams: any ```mermaid block in a post, rendered in the browser by astro-mermaid (astro.config.ts).
+   One utility for every diagram type, in the same system as the post figures (src/components/viz): a plain plate
+   with a hairline border, the site's sans, its ink and border tokens, muted connectors, and the two series colours
+   (--viz-1, --viz-2) where a diagram has series. astro-mermaid uses mermaid's 'default' theme on light and 'dark'
+   on the dark themes; these rules bring both onto the site tokens. Mermaid writes its colours into the SVG with
+   high specificity, hence !important. */
+
+/* astro-mermaid injects a tinted, 8px-radius background on [data-processed]; the plate keeps the page surface */
+.prose pre.mermaid,
+.prose pre.mermaid[data-processed] {
+  display: flex;
+  justify-content: center;
+  max-height: none;
+  overflow: visible;
+  margin-block: 2rem 0.75rem;
+  padding: 1.5rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 6px !important;
+  background-color: var(--background) !important;
+}
+
+[data-theme='cyberpunk'] .prose pre.mermaid {
+  border-color: color-mix(in oklab, var(--neon-cyan) 18%, var(--border));
+}
+
+.prose pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Shapes: nodes, actors, entities, states, notes and boxes take the page surface and a hairline */
+pre.mermaid svg :is(.node rect, .node polygon, .node circle, .node ellipse, .node path, rect.actor, .er.entityBox, .er.attributeBoxOdd, .er.attributeBoxEven, .labelBox) {
+  fill: var(--background) !important;
+  stroke: color-mix(in oklab, var(--foreground) 22%, var(--background)) !important;
+  stroke-width: 1px !important;
+}
+
+pre.mermaid svg .node rect {
+  rx: 6px;
+  ry: 6px;
+}
+
+[data-theme='cyberpunk'] pre.mermaid svg :is(.node rect, .node polygon, rect.actor) {
+  stroke: color-mix(in oklab, var(--neon-cyan) 45%, var(--background)) !important;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.12));
+}
+
+pre.mermaid svg :is(.note, rect.note) {
+  fill: var(--muted) !important;
+  stroke: var(--border) !important;
+}
+
+pre.mermaid svg :is(.cluster rect, .loopLine) {
+  fill: transparent !important;
+  stroke: var(--border) !important;
+}
+
+/* Text */
+pre.mermaid svg :is(.nodeLabel, .edgeLabel, .label, .cluster-label, .noteText, .messageText, .loopText, text) {
+  color: var(--foreground) !important;
+  fill: var(--foreground) !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* Edge labels sit on the page surface, so the line they interrupt does not show through */
+pre.mermaid svg :is(.edgeLabel, .edgeLabel rect, .edgeLabel p, .labelBkg, .relationshipLabelBox) {
+  background: var(--background) !important;
+  fill: var(--background) !important;
+  opacity: 1 !important;
+}
+
+pre.mermaid svg :is(.edgeLabel, .edgeLabel p, .edgeLabel span) {
+  color: var(--muted-foreground) !important;
+}
+
+/* Connectors */
+pre.mermaid svg :is(.flowchart-link, .edgePath .path, .relation, .relationshipLine, .transition, .messageLine0, .messageLine1, .actor-line) {
+  stroke: var(--muted-foreground) !important;
+  stroke-width: 1.5px !important;
+}
+
+pre.mermaid svg .actor-line {
+  stroke-width: 1px !important;
+}
+
+pre.mermaid svg :is(marker path, .arrowheadPath, .arrowMarkerPath) {
+  fill: var(--muted-foreground) !important;
+  stroke: var(--muted-foreground) !important;
+}
+
+/* Series (pie): the site's two series colours in order, then muted steps; a surface gap between slices */
+pre.mermaid svg .pieCircle {
+  stroke: var(--background) !important;
+  stroke-width: 2px !important;
+  opacity: 1 !important;
+}
+
+pre.mermaid svg .pieOuterCircle {
+  stroke: none !important;
+}
+
+pre.mermaid svg path.pieCircle:nth-of-type(1),
+pre.mermaid svg g.legend:nth-of-type(1) rect {
+  fill: var(--viz-1) !important;
+  stroke: var(--viz-1) !important;
+}
+
+pre.mermaid svg path.pieCircle:nth-of-type(2),
+pre.mermaid svg g.legend:nth-of-type(2) rect {
+  fill: var(--viz-2) !important;
+  stroke: var(--viz-2) !important;
+}
+
+pre.mermaid svg path.pieCircle:nth-of-type(n + 3),
+pre.mermaid svg g.legend:nth-of-type(n + 3) rect {
+  fill: color-mix(in oklab, var(--muted-foreground) 70%, var(--background)) !important;
+  stroke: color-mix(in oklab, var(--muted-foreground) 70%, var(--background)) !important;
+}
+
+pre.mermaid svg text.slice {
+  fill: #fff !important;
+  font-weight: 600;
+}

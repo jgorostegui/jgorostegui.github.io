@@ -1,0 +1,159 @@
+---
+/**
+ * The controlled experiment the Copilot post cites: time to finish the task with and without Copilot, for the developers
+ * who finished. Numbers from data/experiment.json next to the post, with the study's size and sources. The build fails
+ * if the post stops saying the quote, or if the times are not the ones the quote says.
+ */
+import './viz.css'
+
+interface Props {
+  data: {
+    quotes: string[]
+    time_min: { with: number; without: number }
+    study: { developers: number; finished_per_group: number; times: string }
+  }
+  body: string
+  label: string
+  caption?: string
+}
+
+const { data, body, label, caption } = Astro.props
+const flat = body.replace(/\s+/g, ' ')
+for (const q of data.quotes) if (!flat.includes(q)) throw new Error(`experiment.json: the post no longer says "${q}"`)
+const saidMin = [...data.quotes.join(' ').matchAll(/(\d+) hours? and (\d+) minutes?/g)].map((m) => +m[1] * 60 + +m[2])
+const ours = [data.time_min.with, data.time_min.without]
+if (saidMin.join() !== ours.join())
+  throw new Error(`experiment.json: the times (${ours.join(', ')} min) are not the quote's (${saidMin.join(', ')} min)`)
+
+const hm = (m: number) => `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')} min`
+const MAX = 180
+const t = data.time_min
+const bars = [
+  { name: 'with Copilot', min: t.with, cls: 've-with' },
+  { name: 'without', min: t.without, cls: 've-without' },
+]
+---
+
+<figure class="viz viz-exp not-prose" aria-label={label}>
+  {caption && <p class="viz-plate">{caption}</p>}
+  <div class="ve-chart">
+    <div class="ve-grid" aria-hidden="true">
+      {[0, 1, 2, 3].map((h) => <span style={`--x:${(h * 60) / MAX}`} />)}
+    </div>
+    {
+      bars.map((b) => (
+        <div class="ve-item">
+          <div class="ve-lab">
+            <span>{b.name}</span>
+            <span class="viz-num">{hm(b.min)}</span>
+          </div>
+          <span class:list={['ve-bar', b.cls]} style={`--w:${(b.min / MAX).toFixed(4)}`} />
+        </div>
+      ))
+    }
+    <div class="ve-axis viz-num" aria-hidden="true">
+      {[0, 1, 2, 3].map((h) => <span style={`--x:${(h * 60) / MAX}`}>{h ? `${h} h` : '0'}</span>)}
+    </div>
+  </div>
+
+  <p class="viz-note">
+    GitHub study cited in the post · {data.study.developers} developers, {data.study.finished_per_group} per group finished · times {data.study.times}
+  </p>
+</figure>
+
+<style is:global>
+  .viz-exp {
+    gap: 1rem;
+  }
+
+  .ve-chart {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  .ve-grid {
+    position: absolute;
+    inset: 0 0 1.25rem;
+    pointer-events: none;
+  }
+
+  .ve-grid span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--x) * 100%);
+    width: 1px;
+    background: var(--border);
+  }
+
+  .ve-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .ve-lab {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.125rem 1rem;
+    color: var(--ink);
+    font-size: 0.75rem;
+  }
+
+  .ve-lab .viz-num {
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+  }
+
+  /* The gridlines pass behind the labels, not through them */
+  .ve-lab > span {
+    background: var(--background);
+    box-shadow: 0 0 0 0.25rem var(--background);
+  }
+
+  .ve-bar {
+    display: block;
+    width: calc(var(--w) * 100%);
+    height: 0.75rem;
+    border-radius: 3px;
+    background: var(--c);
+  }
+
+  .ve-with {
+    --c: var(--viz-1);
+  }
+
+  .ve-without {
+    --c: color-mix(in oklab, var(--muted-foreground) 80%, var(--background));
+  }
+
+  [data-theme='cyberpunk'] .ve-with {
+    box-shadow: 0 0 10px color-mix(in oklab, var(--viz-1) 60%, transparent);
+  }
+
+  .ve-axis {
+    position: relative;
+    height: 1rem;
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+  }
+
+  .ve-axis span {
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    translate: -50% 0;
+    white-space: nowrap;
+  }
+
+  .ve-axis span:first-child {
+    translate: 0 0;
+  }
+
+  .ve-axis span:last-child {
+    translate: -100% 0;
+  }
+</style>

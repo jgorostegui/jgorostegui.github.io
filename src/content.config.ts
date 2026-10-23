@@ -15,6 +15,16 @@ const blog = defineCollection({
       tags: z.array(z.string()).optional(),
       authors: z.array(z.string()).optional(),
       draft: z.boolean().optional(),
+      // The post's figure on the home page (src/components/viz/HomeFigure.astro): which figure, the file in the
+      // post's data/ folder it draws, its caption and its accessible label
+      homeFigure: z
+        .object({
+          kind: z.enum(['cost-by-scenario', 'post-flow', 'copilot-experiment']),
+          data: z.string(),
+          caption: z.string(),
+          label: z.string(),
+        })
+        .optional(),
     }),
 })
 

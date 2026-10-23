@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './mermaid.css';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, [data-theme=cyberpunk], [data-theme=cyberpunk] *));
 
@@ -47,7 +48,18 @@
   font-display: swap;
 }
 
+/* Newsreader (variable, latin): the name and tagline of the home page hero */
+@font-face {
+  font-family: 'Newsreader';
+  src: url('/fonts/NewsreaderVF.woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  /* The home page column (layout `wide`): header, hero text, posts and footer share it */
+  --wide-column: 74rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
@@ -94,6 +106,23 @@
   --neon-yellow: #f0e040;
   --link: #00f0ff;
   color-scheme: dark;
+}
+
+/* Post figures (src/components/viz and mermaid diagrams, src/styles/mermaid.css): one system.
+   --viz-1 / --viz-2 are the two series colours of each theme. */
+:root {
+  --viz-1: #2a78d6;
+  --viz-2: #eb6834;
+}
+
+[data-theme='dark'] {
+  --viz-1: #3987e5;
+  --viz-2: #d95926;
+}
+
+[data-theme='cyberpunk'] {
+  --viz-1: #1a9ccc;
+  --viz-2: #ff2d95;
 }
 
 /* Cyberpunk global effects */

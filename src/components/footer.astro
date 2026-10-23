@@ -2,10 +2,20 @@
 import { SITE, SOCIAL_LINKS } from '@/consts'
 import { GIT_COMMIT, GIT_COMMIT_URL } from '@/lib/git'
 import SocialIcons from './social-icons.astro'
+
+interface Props {
+  /** Home page: the hero's column (--wide-column) instead of 48rem */
+  wide?: boolean
+}
+
+const { wide = false } = Astro.props
 ---
 
 <footer
-  class="mx-auto mb-8 flex w-full max-w-3xl flex-col items-start gap-y-2 px-4 sm:mb-4 sm:flex-row sm:items-center sm:justify-between"
+  class:list={[
+    'mx-auto mb-8 flex w-full flex-col items-start gap-y-2 px-4 sm:mb-4 sm:flex-row sm:items-center sm:justify-between',
+    wide ? 'max-w-(--wide-column)' : 'max-w-3xl',
+  ]}
 >
   <div
     class="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm"

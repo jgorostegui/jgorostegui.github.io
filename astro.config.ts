@@ -24,7 +24,18 @@ export default defineConfig({
   site: 'https://jgorostegui.github.io',
   compressHTML: true,
   integrations: [
-    mermaid({ theme: 'default', autoTheme: true, enableLog: false }),
+    mermaid({
+      // autoTheme maps the site's light theme to mermaid's 'default' and dark to 'dark'; any other site theme
+      // (cyberpunk) gets this one, and it is a dark theme. Colours then come from src/styles/mermaid.css
+      theme: 'dark',
+      autoTheme: true,
+      enableLog: false,
+      // Measure labels in the site's sans
+      mermaidConfig: {
+        fontFamily: 'Geist, ui-sans-serif, system-ui, sans-serif',
+        flowchart: { padding: 14, nodeSpacing: 36, rankSpacing: 40 },
+      },
+    }),
     mdx(),
     react(),
     sitemap(),

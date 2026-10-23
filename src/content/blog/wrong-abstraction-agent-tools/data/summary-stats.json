@@ -1,0 +1,362 @@
+{
+  "scenarios": {
+    "S1": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.079953,
+        "cost_std": 0.000517,
+        "cost_ci_lo": 0.079311,
+        "cost_ci_hi": 0.080594,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.099596,
+        "cost_std": 0.001678,
+        "cost_ci_lo": 0.097512,
+        "cost_ci_hi": 0.10168,
+        "turns_mean": 4.0,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.132625,
+        "cost_std": 0.001443,
+        "cost_ci_lo": 0.130833,
+        "cost_ci_hi": 0.134417,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.173056,
+        "cost_std": 0.022505,
+        "cost_ci_lo": 0.145113,
+        "cost_ci_hi": 0.201,
+        "turns_mean": 4.2,
+        "n": 5
+      }
+    },
+    "S2": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.055303,
+        "cost_std": 0.000538,
+        "cost_ci_lo": 0.054634,
+        "cost_ci_hi": 0.055972,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.268516,
+        "cost_std": 0.138149,
+        "cost_ci_lo": 0.096981,
+        "cost_ci_hi": 0.44005,
+        "turns_mean": 13.8,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.119442,
+        "cost_std": 0.037866,
+        "cost_ci_lo": 0.072425,
+        "cost_ci_hi": 0.166458,
+        "turns_mean": 4.0,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.724806,
+        "cost_std": 0.133442,
+        "cost_ci_lo": 0.559116,
+        "cost_ci_hi": 0.890497,
+        "turns_mean": 32.8,
+        "n": 5
+      }
+    },
+    "S3": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.085644,
+        "cost_std": 0.007889,
+        "cost_ci_lo": 0.075849,
+        "cost_ci_hi": 0.095439,
+        "turns_mean": 3.4,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.216885,
+        "cost_std": 0.00518,
+        "cost_ci_lo": 0.210454,
+        "cost_ci_hi": 0.223317,
+        "turns_mean": 4.2,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.082794,
+        "cost_std": 0.023454,
+        "cost_ci_lo": 0.053672,
+        "cost_ci_hi": 0.111915,
+        "turns_mean": 2.2,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.347885,
+        "cost_std": 0.001989,
+        "cost_ci_lo": 0.345416,
+        "cost_ci_hi": 0.350355,
+        "turns_mean": 4.0,
+        "n": 5
+      }
+    },
+    "S4": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.03901,
+        "cost_std": 3.2e-05,
+        "cost_ci_lo": 0.038971,
+        "cost_ci_hi": 0.03905,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.049452,
+        "cost_std": 0.000124,
+        "cost_ci_lo": 0.049298,
+        "cost_ci_hi": 0.049605,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.064505,
+        "cost_std": 0.000785,
+        "cost_ci_lo": 0.06353,
+        "cost_ci_hi": 0.06548,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.083474,
+        "cost_std": 0.003841,
+        "cost_ci_lo": 0.078705,
+        "cost_ci_hi": 0.088242,
+        "turns_mean": 3.0,
+        "n": 5
+      }
+    },
+    "S5": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.050404,
+        "cost_std": 0.000349,
+        "cost_ci_lo": 0.04997,
+        "cost_ci_hi": 0.050837,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.108732,
+        "cost_std": 0.002264,
+        "cost_ci_lo": 0.105921,
+        "cost_ci_hi": 0.111543,
+        "turns_mean": 4.0,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.081355,
+        "cost_std": 0.000246,
+        "cost_ci_lo": 0.08105,
+        "cost_ci_hi": 0.081661,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.167648,
+        "cost_std": 0.00063,
+        "cost_ci_lo": 0.166866,
+        "cost_ci_hi": 0.16843,
+        "turns_mean": 4.0,
+        "n": 5
+      }
+    },
+    "S6": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.050308,
+        "cost_std": 0.000514,
+        "cost_ci_lo": 0.049669,
+        "cost_ci_hi": 0.050946,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.406499,
+        "cost_std": 0.016946,
+        "cost_ci_lo": 0.385459,
+        "cost_ci_hi": 0.42754,
+        "turns_mean": 6.8,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.085282,
+        "cost_std": 0.001252,
+        "cost_ci_lo": 0.083728,
+        "cost_ci_hi": 0.086836,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.753152,
+        "cost_std": 0.003615,
+        "cost_ci_lo": 0.748664,
+        "cost_ci_hi": 0.75764,
+        "turns_mean": 6.0,
+        "n": 5
+      }
+    },
+    "S7": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.039959,
+        "cost_std": 0.00015,
+        "cost_ci_lo": 0.039773,
+        "cost_ci_hi": 0.040144,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.060057,
+        "cost_std": 0.009484,
+        "cost_ci_lo": 0.048282,
+        "cost_ci_hi": 0.071833,
+        "turns_mean": 5.0,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.064938,
+        "cost_std": 2.2e-05,
+        "cost_ci_lo": 0.06491,
+        "cost_ci_hi": 0.064966,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.10125,
+        "cost_std": 0.016214,
+        "cost_ci_lo": 0.081118,
+        "cost_ci_hi": 0.121382,
+        "turns_mean": 5.0,
+        "n": 5
+      }
+    },
+    "S8": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.042831,
+        "cost_std": 0.000809,
+        "cost_ci_lo": 0.041827,
+        "cost_ci_hi": 0.043835,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.209761,
+        "cost_std": 0.001983,
+        "cost_ci_lo": 0.207298,
+        "cost_ci_hi": 0.212223,
+        "turns_mean": 4.0,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.072066,
+        "cost_std": 0.001496,
+        "cost_ci_lo": 0.070209,
+        "cost_ci_hi": 0.073923,
+        "turns_mean": 2.0,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.381633,
+        "cost_std": 0.041039,
+        "cost_ci_lo": 0.330677,
+        "cost_ci_hi": 0.43259,
+        "turns_mean": 5.0,
+        "n": 5
+      }
+    },
+    "S9": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.074418,
+        "cost_std": 0.007347,
+        "cost_ci_lo": 0.065296,
+        "cost_ci_hi": 0.08354,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.159628,
+        "cost_std": 0.013077,
+        "cost_ci_lo": 0.143391,
+        "cost_ci_hi": 0.175865,
+        "turns_mean": 6.6,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.131749,
+        "cost_std": 0.062132,
+        "cost_ci_lo": 0.054602,
+        "cost_ci_hi": 0.208896,
+        "turns_mean": 2.8,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.246837,
+        "cost_std": 0.016652,
+        "cost_ci_lo": 0.226161,
+        "cost_ci_hi": 0.267513,
+        "turns_mean": 6.0,
+        "n": 5
+      }
+    },
+    "S10": {
+      "Notion Agent CLI (Sonnet)": {
+        "cost_mean": 0.088255,
+        "cost_std": 0.01938,
+        "cost_ci_lo": 0.064191,
+        "cost_ci_hi": 0.112319,
+        "turns_mean": 3.0,
+        "n": 5
+      },
+      "MCP (Sonnet)": {
+        "cost_mean": 0.114665,
+        "cost_std": 0.001758,
+        "cost_ci_lo": 0.112482,
+        "cost_ci_hi": 0.116847,
+        "turns_mean": 4.0,
+        "n": 5
+      },
+      "Notion Agent CLI (Opus)": {
+        "cost_mean": 0.225199,
+        "cost_std": 0.047409,
+        "cost_ci_lo": 0.166333,
+        "cost_ci_hi": 0.284066,
+        "turns_mean": 5.6,
+        "n": 5
+      },
+      "MCP (Opus)": {
+        "cost_mean": 0.189239,
+        "cost_std": 0.000282,
+        "cost_ci_lo": 0.188889,
+        "cost_ci_hi": 0.189589,
+        "turns_mean": 4.0,
+        "n": 5
+      }
+    }
+  },
+  "models": {
+    "Sonnet": {
+      "nac_total_cost": 3.0304,
+      "mcp_total_cost": 8.469,
+      "nac_avg_turns": 2.64,
+      "mcp_avg_turns": 5.54,
+      "saving_pct": 64.2,
+      "cohens_d": 1.35
+    },
+    "Opus": {
+      "nac_total_cost": 5.2998,
+      "mcp_total_cost": 15.8449,
+      "nac_avg_turns": 2.86,
+      "mcp_avg_turns": 7.4,
+      "saving_pct": 66.6,
+      "cohens_d": 1.23
+    }
+  }
+}

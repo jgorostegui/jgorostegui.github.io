@@ -10,6 +10,12 @@ import logo from '../../public/static/logo.svg'
 // When the mobile nav is enabled, the desktop <nav> collapses below `sm:`
 // and the hamburger dropdown takes over. When disabled (safety hatch),
 // the desktop nav renders at every width and no hamburger appears.
+interface Props {
+  /** Home page: the hero's column (--wide-column) instead of 48rem */
+  wide?: boolean
+}
+
+const { wide = false } = Astro.props
 const mobileNavEnabled = FEATURES.mobileNav.enabled
 const searchEnabled = FEATURES.search.enabled
 
@@ -22,7 +28,10 @@ const currentPath = normalizePath(Astro.url.pathname)
 
 <div>
   <div
-    class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3"
+    class:list={[
+      'mx-auto flex items-center justify-between gap-4 px-4 py-3',
+      wide ? 'max-w-(--wide-column)' : 'max-w-3xl',
+    ]}
   >
     <Link href="/" class="flex shrink-0 items-center justify-center gap-3">
       <Image src={logo} alt="Logo" class="size-5 sm:size-6" />

@@ -1,0 +1,19 @@
+{
+  "source": "src/content/blog/ai-coding-assistants/index.md, paragraph on the controlled experiment",
+  "quotes": [
+    "developers employing Copilot finished tasks 55% more quickly, averaging 1 hour and 11 minutes, whereas those not using Copilot required 2 hours and 41 minutes"
+  ],
+  "time_min": {
+    "with": 71,
+    "without": 161
+  },
+  "study": {
+    "developers": 95,
+    "finished_per_group": 35,
+    "times": "of those who finished",
+    "sources": [
+      "https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/ (cited in the post): \"We recruited 95 professional developers\"",
+      "https://arxiv.org/abs/2302.06590 (the study's paper), page 5: \"Thirty-five developers from both the treated and control groups completed the task\"; the times are conditioned on completing it"
+    ]
+  }
+}

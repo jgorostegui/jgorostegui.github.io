@@ -1,0 +1,221 @@
+/* Setup hero (home page). Its text uses the site tokens, so it reads as part of the page in every theme; the scene
+   on the canvas paints its own palette per theme (src/components/hero/setup-hero.js). */
+.px-hero {
+  --bg: var(--background);
+  --ink: var(--foreground);
+  --ink-2: color-mix(in oklab, var(--foreground) 72%, var(--background));
+  --ink-3: var(--muted-foreground);
+  --signal: var(--link);
+  --display: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --ui: var(--font-sans);
+  --mono: var(--font-mono);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  /* the site sets tracking, text-wrap and overflow-wrap on every element; the hero's text does not use them */
+  letter-spacing: normal;
+  text-wrap: wrap;
+  overflow-wrap: normal;
+}
+
+.px-hero * {
+  letter-spacing: inherit;
+  text-wrap: inherit;
+  overflow-wrap: inherit;
+}
+
+.px-hero :focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* the hero's text column: the home page column (--wide-column), shared with the header, body and footer */
+.px-hero .wrap {
+  width: 100%;
+  max-width: var(--wide-column);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+/* Josu's corner at full width: the name top left on the wall and the scene to the right
+   and below. The JS sets the height from where the scene fits (the value here is only the starting one). */
+.px-hero {
+  position: relative;
+  height: 40rem;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+#px {
+  position: absolute;
+  left: 0;
+  top: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: manipulation;
+  outline: none;
+}
+
+/* The name block lets the pointer through to the scene except over the text itself, which stays selectable (and a
+   click on it does not send keyboard input to his screen). Each line is as wide as its text, not the full width. */
+.px-who {
+  position: relative;
+  z-index: 1;
+  padding-top: clamp(1.5rem, 5vw, 3.5rem);
+  pointer-events: none;
+}
+
+.px-who .cmd,
+.px-who h1,
+.px-who .lede,
+.px-who .links {
+  width: fit-content;
+  max-width: 100%;
+  pointer-events: auto;
+}
+
+.px-who-in {
+  max-width: 36rem;
+}
+
+.px-who a {
+  pointer-events: auto;
+}
+
+.px-who .cmd {
+  margin: 0 0 0.5rem;
+  color: var(--ink-3);
+  font-family: var(--mono);
+  font-size: 0.875rem;
+}
+
+.px-who h1 {
+  margin: 0 0 0.7rem;
+  font-family: var(--display);
+  font-size: clamp(2.8rem, 6.4vw, 5.2rem);
+  line-height: 0.95;
+  font-weight: 420;
+  letter-spacing: -0.03em;
+}
+
+.px-hero .cur {
+  margin-left: 0.04em;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 0.8em;
+  color: var(--signal);
+  animation: px-cur 1.1s steps(1) infinite;
+}
+
+/* As in a terminal: while someone types on his screen, the cursor stays solid. */
+.px-hero .cur.typing {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes px-cur {
+  50% {
+    opacity: 0;
+  }
+}
+
+.px-who .lede {
+  margin: 0 0 1.1rem;
+  color: var(--ink-2);
+  font-family: var(--display);
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+}
+
+.px-who .links {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  color: var(--ink-3);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+}
+
+.px-who .links a {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.px-who .links a:hover {
+  color: var(--ink);
+}
+
+.px-who .links span {
+  padding-inline: 0.35em;
+  opacity: 0.6;
+}
+
+/* Invisible buttons over what can be clicked, for keyboard access. The mouse goes through them: the canvas
+   decides what is under the pointer. */
+.px-hot button {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  pointer-events: none;
+}
+
+.px-hot button:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* What you type goes to this field, invisible and placed over the terminal on his screen. The mouse goes through it
+   (a click on the scene activates it); with Tab, its focus ring frames the terminal. */
+.px-type {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  appearance: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px;
+  pointer-events: none;
+  outline: none;
+}
+
+.px-type::selection {
+  background: transparent;
+}
+
+.px-type:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.px-hero + main {
+  padding-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .px-hero .cur {
+    animation: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  .px-who .links {
+    font-size: 0.75rem;
+  }
+}
+
+/* At 320px the name fits on one line (otherwise the hero grows by a whole line) */
+@media (max-width: 22.5rem) {
+  .px-who h1 {
+    font-size: 2.5rem;
+  }
+}

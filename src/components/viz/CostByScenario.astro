@@ -1,0 +1,556 @@
+---
+/**
+ * Mean cost per session for every benchmark task: Notion MCP -> Notion Agent CLI,
+ * with the 95% CI of the 5 runs behind each mean. One model at a time, switchable.
+ *
+ * Data: benchmark/assets/summary-stats.json from jgorostegui/notion-agent-cli@a0fe33a,
+ * passed in unchanged. Rendered on the server; the script only adds the model switch,
+ * the entrance motion and the hover/focus readout.
+ */
+import './viz.css'
+
+interface Arm {
+  cost_mean: number
+  cost_std: number
+  cost_ci_lo: number
+  cost_ci_hi: number
+  turns_mean: number
+  n: number
+}
+interface Props {
+  stats: { scenarios: Record<string, Record<string, Arm>> }
+  label: string
+  model?: 'sonnet' | 'opus'
+  /** Home page: tighter rows and no data table (the post has the full figure) */
+  compact?: boolean
+  /** Plate header (home page): what the figure shows */
+  caption?: string
+}
+
+const { stats, label, model = 'opus', compact = false, caption } = Astro.props
+
+// SCENARIO_NAMES in benchmark/analysis.ipynb
+const NAMES: Record<string, string> = {
+  S1: 'Read+Summarize',
+  S2: 'Query+Report',
+  S3: 'Copy+Modify',
+  S4: 'Set Property',
+  S5: 'Replace Section',
+  S6: 'Merge Pages',
+  S7: 'Batch Update',
+  S8: 'Copy+Append',
+  S9: 'Create Table',
+  S10: 'Import DB',
+}
+const MODELS = [
+  { key: 'sonnet', name: 'Sonnet 4.6', arm: 'Sonnet' },
+  { key: 'opus', name: 'Opus 4.6', arm: 'Opus' },
+] as const
+
+const ids = Object.keys(stats.scenarios).sort((a, b) => +a.slice(1) - +b.slice(1))
+const rows = ids.map((id) => {
+  const s = stats.scenarios[id]
+  const m = Object.fromEntries(
+    MODELS.map(({ key, arm }) => {
+      const cli = s[`Notion Agent CLI (${arm})`]
+      const mcp = s[`MCP (${arm})`]
+      if (!cli || !mcp) throw new Error(`summary-stats.json: missing ${id} ${arm}`)
+      return [key, { cli, mcp, delta: cli.cost_mean / mcp.cost_mean - 1 }]
+    }),
+  ) as Record<'sonnet' | 'opus', { cli: Arm; mcp: Arm; delta: number }>
+  return { id, name: NAMES[id] ?? id, m }
+})
+
+const top = Math.max(
+  ...rows.flatMap((r) => MODELS.flatMap(({ key }) => [r.m[key].cli.cost_ci_hi, r.m[key].mcp.cost_ci_hi])),
+)
+const max = Math.ceil(top * 10) / 10
+const ticks: number[] = []
+for (let t = 0; t <= max + 1e-9; t += 0.2) ticks.push(+t.toFixed(2))
+const u = (v: number) => (v / max).toFixed(4)
+// A CI narrower than ~0.6% of the axis is thinner than its own end caps: not drawn (it stays in the table)
+const tiny = (a: Arm) => (a.cost_ci_hi - a.cost_ci_lo) / max < 0.006
+const tinyKeys = (r: { m: Record<'sonnet' | 'opus', { cli: Arm; mcp: Arm }> }, f: 'cli' | 'mcp') =>
+  MODELS.filter(({ key }) => tiny(r.m[key][f]))
+    .map(({ key }) => key)
+    .join(' ')
+const pct = (d: number) => (d < 0 ? '−' : '+') + Math.abs(Math.round(d * 100)) + '%'
+// summary-stats.json stores 6 decimals: the table shows them as stored, never re-rounded
+const usd = (v: number) => '$' + v.toFixed(6)
+
+const vars = (r: (typeof rows)[number], i: number) =>
+  [
+    `--i:${i}`,
+    ...MODELS.flatMap(({ key }) => {
+      const { cli, mcp } = r.m[key]
+      const k = key[0]
+      const a = Math.min(cli.cost_mean, mcp.cost_mean)
+      const b = Math.max(cli.cost_mean, mcp.cost_mean)
+      return [
+        `--xc-${k}:${u(cli.cost_mean)}`,
+        `--xm-${k}:${u(mcp.cost_mean)}`,
+        `--lc-${k}:${u(cli.cost_ci_lo)}`,
+        `--hc-${k}:${u(cli.cost_ci_hi)}`,
+        `--lm-${k}:${u(mcp.cost_ci_lo)}`,
+        `--hm-${k}:${u(mcp.cost_ci_hi)}`,
+        `--bl-${k}:${u(a)}`,
+        `--bw-${k}:${u(b - a)}`,
+        `--dir-${k}:${cli.cost_mean <= mcp.cost_mean ? 'to left' : 'to right'}`,
+      ]
+    }),
+  ].join(';')
+
+const readout = (r: (typeof rows)[number]) =>
+  JSON.stringify({
+    t: `${r.id} ${r.name}`,
+    m: Object.fromEntries(
+      MODELS.map(({ key, name }) => {
+        const { cli, mcp, delta } = r.m[key]
+        const arm = (a: Arm) => [a.cost_mean, a.cost_ci_lo, a.cost_ci_hi, a.turns_mean, a.n]
+        return [key, { name, mcp: arm(mcp), cli: arm(cli), d: pct(delta) }]
+      }),
+    ),
+  })
+---
+
+<figure
+  class:list={['viz viz-cost not-prose', { 'viz--compact': compact }]}
+  data-viz="cost"
+  data-model={model}
+  aria-label={label}
+>
+  {caption && <p class="viz-plate">{caption}</p>}
+  <div class="viz-bar">
+    <ul class="viz-legend">
+      <li><span class="viz-key viz-key--dot" style="--c: var(--c-cli)"></span>Notion Agent CLI</li>
+      <li><span class="viz-key viz-key--dot" style="--c: var(--c-mcp)"></span>Notion MCP</li>
+      <li><span class="viz-key vc-key-ci"></span>95% CI, 5 runs</li>
+    </ul>
+    <div class="viz-seg" role="group" aria-label="Model">
+      {
+        MODELS.map((m) => (
+          <button type="button" data-set={m.key} aria-pressed={m.key === model ? 'true' : 'false'}>
+            {m.name}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="vc-plot">
+    <div class="vc-grid vc-head" aria-hidden="true">
+      <span></span>
+      <span>{caption ? '' : 'Mean cost per session'}</span>
+      <span class="vc-r">vs MCP</span>
+    </div>
+    <ol class="vc-rows" style={`--step:${((0.2 / max) * 100).toFixed(4)}%`}>
+      {
+        rows.map((r, i) => (
+          <li class="vc-grid vc-row viz-row" tabindex="0" style={vars(r, i)} data-v={readout(r)}>
+            <span class="vc-label">
+              <span class="viz-num vc-id">{r.id}</span>
+              {r.name}
+            </span>
+            <span class="vc-track" aria-hidden="true">
+              <span class="vc-bar" />
+              <span class="vc-ci vc-mcp" data-tiny={tinyKeys(r, 'mcp')} />
+              <span class="vc-ci vc-cli" data-tiny={tinyKeys(r, 'cli')} />
+              <span class="vc-dot vc-mcp" />
+              <span class="vc-dot vc-cli" />
+            </span>
+            <span class="vc-r viz-num">
+              {MODELS.map(({ key }) => (
+                <span data-m={key} class:list={['vc-delta', { 'vc-up': r.m[key].delta > 0 }]}>
+                  {pct(r.m[key].delta)}
+                </span>
+              ))}
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="vc-grid vc-axis" aria-hidden="true">
+      <span></span>
+      <span class="vc-ticks">
+        {ticks.map((t) => <span class="viz-num" style={`--x:${u(t)}`}>{t ? '$' + t.toFixed(2) : '$0'}</span>)}
+      </span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="viz-tip" role="status" hidden></div>
+
+  {
+    !compact && (
+      <p class="viz-note">
+        Whiskers: 95% confidence interval of the mean of 5 runs (Student's t). Intervals too narrow to show beside the
+        dot are not drawn. Standard deviations and every value are in Data.
+      </p>
+    )
+  }
+
+  {
+    !compact && (
+  <details class="viz-data">
+    <summary>Data</summary>
+    <div class="viz-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Model</th>
+            <th class="r">MCP mean [95% CI]</th>
+            <th class="r">SD</th>
+            <th class="r">mean turns</th>
+            <th class="r">CLI mean [95% CI]</th>
+            <th class="r">SD</th>
+            <th class="r">mean turns</th>
+            <th class="r">CLI vs MCP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.flatMap((r) =>
+              MODELS.map(({ key, name }) => {
+                const { cli, mcp, delta } = r.m[key]
+                return (
+                  <tr>
+                    <td>
+                      {r.id} {r.name}
+                    </td>
+                    <td>{name}</td>
+                    <td class="r">
+                      {usd(mcp.cost_mean)} <span>[{usd(mcp.cost_ci_lo)}, {usd(mcp.cost_ci_hi)}]</span>
+                    </td>
+                    <td class="r">{usd(mcp.cost_std)}</td>
+                    <td class="r">{mcp.turns_mean.toFixed(1)}</td>
+                    <td class="r">
+                      {usd(cli.cost_mean)} <span>[{usd(cli.cost_ci_lo)}, {usd(cli.cost_ci_hi)}]</span>
+                    </td>
+                    <td class="r">{usd(cli.cost_std)}</td>
+                    <td class="r">{cli.turns_mean.toFixed(1)}</td>
+                    <td class="r">{pct(delta)}</td>
+                  </tr>
+                )
+              }),
+            )
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+    )
+  }
+</figure>
+
+<style is:global>
+  .vc-plot {
+    --lab: 10rem;
+    --val: 4.25rem;
+    container: vc-plot / inline-size;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .vc-grid {
+    display: grid;
+    grid-template-columns: var(--lab) minmax(0, 1fr) var(--val);
+    column-gap: 1rem;
+    align-items: center;
+  }
+
+  .vc-head {
+    padding: 0 0 0.375rem;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+  }
+
+  .vc-r {
+    text-align: right;
+  }
+
+  .vc-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .vc-row {
+    --ring-bg: var(--background);
+    height: 2.125rem;
+    margin: 0;
+    padding: 0;
+    border-radius: 0.375rem;
+    outline-offset: -2px;
+    transition: background-color 0.15s var(--ease);
+  }
+
+  .vc-row:hover,
+  .vc-row:focus-visible {
+    --ring-bg: color-mix(in oklab, var(--muted) 80%, var(--background));
+    background: var(--ring-bg);
+  }
+
+  .viz[data-model='sonnet'] .vc-row {
+    --xc: var(--xc-s);
+    --xm: var(--xm-s);
+    --lc: var(--lc-s);
+    --hc: var(--hc-s);
+    --lm: var(--lm-s);
+    --hm: var(--hm-s);
+    --bl: var(--bl-s);
+    --bw: var(--bw-s);
+    --dir: var(--dir-s);
+  }
+
+  .viz[data-model='opus'] .vc-row {
+    --xc: var(--xc-o);
+    --xm: var(--xm-o);
+    --lc: var(--lc-o);
+    --hc: var(--hc-o);
+    --lm: var(--lm-o);
+    --hm: var(--hm-o);
+    --bl: var(--bl-o);
+    --bw: var(--bw-o);
+    --dir: var(--dir-o);
+  }
+
+  .vc-label {
+    padding-left: 0.5rem;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  .vc-id {
+    display: inline-block;
+    min-width: 1.75rem;
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+  }
+
+  .vc-track {
+    position: relative;
+    height: 100%;
+    background: linear-gradient(to right, var(--border) 1px, transparent 1px) 0 0 / var(--step) 100% repeat-x;
+  }
+
+  .vc-track > span {
+    position: absolute;
+    top: 50%;
+    transition:
+      left 0.7s var(--ease),
+      width 0.7s var(--ease);
+    transition-delay: calc(var(--i) * 35ms);
+  }
+
+  /* The span between the two means: from MCP's colour to the CLI's */
+  .vc-bar {
+    left: calc(var(--bl) * 100%);
+    width: calc(var(--bw) * 100%);
+    height: 0.5rem;
+    translate: 0 -50%;
+    border-radius: 0.25rem;
+    background: linear-gradient(
+      var(--dir),
+      color-mix(in oklab, var(--c-mcp) 30%, transparent),
+      color-mix(in oklab, var(--c-cli) 30%, transparent)
+    );
+  }
+
+  /* 95% CI: hairline with end caps, in the series colour */
+  .vc-ci {
+    height: 0.5rem;
+    translate: 0 -50%;
+    border-inline: 1.5px solid var(--c);
+    opacity: 0.75;
+  }
+
+  .vc-ci::before {
+    content: '';
+    position: absolute;
+    inset: calc(50% - 0.75px) 0 auto;
+    height: 1.5px;
+    background: var(--c);
+  }
+
+  .viz[data-model='sonnet'] .vc-ci[data-tiny~='sonnet'],
+  .viz[data-model='opus'] .vc-ci[data-tiny~='opus'] {
+    visibility: hidden;
+  }
+
+  .vc-ci.vc-mcp {
+    --c: var(--c-mcp);
+    left: calc(var(--lm) * 100%);
+    width: calc((var(--hm) - var(--lm)) * 100%);
+  }
+
+  .vc-ci.vc-cli {
+    --c: var(--c-cli);
+    left: calc(var(--lc) * 100%);
+    width: calc((var(--hc) - var(--lc)) * 100%);
+  }
+
+  .vc-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 0 2px var(--ring-bg);
+  }
+
+  .vc-dot.vc-mcp {
+    --c: var(--c-mcp);
+    left: calc(var(--xm) * 100%);
+  }
+
+  .vc-dot.vc-cli {
+    --c: var(--c-cli);
+    left: calc(var(--xc) * 100%);
+  }
+
+  [data-theme='cyberpunk'] .vc-dot {
+    box-shadow:
+      0 0 0 2px var(--ring-bg),
+      0 0 10px color-mix(in oklab, var(--c) 70%, transparent);
+  }
+
+  /* Before the figure scrolls into view the CLI mean sits on the MCP mean, then slides */
+  .viz-cost.is-pre .vc-dot.vc-cli {
+    left: calc(var(--xm) * 100%);
+  }
+
+  .viz-cost.is-pre .vc-bar {
+    left: calc(var(--xm) * 100%);
+    width: 0;
+  }
+
+  .vc-delta {
+    color: var(--ink-2);
+    font-size: 0.75rem;
+  }
+
+  .vc-delta.vc-up {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .vc-key-ci {
+    position: relative;
+    width: 1rem;
+    height: 0.5rem;
+    border-inline: 1.5px solid var(--ink-3);
+  }
+
+  .vc-key-ci::before {
+    content: '';
+    position: absolute;
+    inset: calc(50% - 0.75px) 0 auto;
+    height: 1.5px;
+    background: var(--ink-3);
+  }
+
+  .vc-axis {
+    padding-top: 0.375rem;
+  }
+
+  .vc-ticks {
+    position: relative;
+    height: 1rem;
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+  }
+
+  .vc-ticks span {
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    translate: -50% 0;
+  }
+
+  .vc-ticks span:first-child {
+    translate: 0 0;
+  }
+
+  .viz--compact .vc-row {
+    height: 1.625rem;
+  }
+
+  .viz--compact .vc-label {
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 36rem) {
+    .vc-plot {
+      --lab: 8.5rem;
+      --val: 2.75rem;
+    }
+
+    .vc-grid {
+      column-gap: 0.5rem;
+    }
+
+    .vc-label {
+      padding-left: 0.25rem;
+      font-size: 0.75rem;
+    }
+
+    .vc-id {
+      min-width: 1.5rem;
+      font-size: 0.6875rem;
+    }
+
+    .vc-ticks span:nth-child(even) {
+      display: none;
+    }
+  }
+
+  /* Narrow figure (phones): the task name and the change go on one line and the track takes the full width below,
+     so the scale keeps its room instead of shrinking between two fixed columns */
+  @container vc-plot (max-width: 24rem) {
+    .vc-grid {
+      grid-template-columns: minmax(0, 1fr) var(--val);
+    }
+
+    .vc-head > :first-child,
+    .vc-axis > :not(.vc-ticks) {
+      display: none;
+    }
+
+    .vc-axis {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .vc-row,
+    .viz--compact .vc-row {
+      grid-template-rows: auto 1.25rem;
+      row-gap: 0.125rem;
+      height: auto;
+      padding-block: 0.375rem 0.25rem;
+    }
+
+    .vc-row .vc-label {
+      grid-area: 1 / 1;
+      padding-left: 0.375rem;
+    }
+
+    .vc-row .vc-r {
+      grid-area: 1 / 2;
+      padding-right: 0.375rem;
+    }
+
+    .vc-row .vc-track {
+      grid-area: 2 / 1 / 3 / 3;
+    }
+
+    .vc-track,
+    .vc-ticks {
+      margin-inline: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  import { initViz } from './viz'
+  initViz()
+</script>

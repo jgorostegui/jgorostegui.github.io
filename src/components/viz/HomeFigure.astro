@@ -1,0 +1,49 @@
+---
+/**
+ * A post's figure on the home page, declared in the post's frontmatter (homeFigure): which figure, the file in the
+ * post's data/ folder it draws, its caption and its accessible label. The home page knows no post by name: a new
+ * post gets a home figure by adding those lines. It is independent of the figures inside the post: the home figure
+ * is a summary and can show less than they do.
+ */
+import type { CollectionEntry } from 'astro:content'
+import type { ComponentProps } from 'astro/types'
+import CopilotExperiment from './CopilotExperiment.astro'
+import CostByScenario from './CostByScenario.astro'
+import PostFlow from './PostFlow.astro'
+
+interface Props {
+  post: CollectionEntry<'blog'>
+}
+
+const { post } = Astro.props
+const fig = post.data.homeFigure
+if (!fig) throw new Error(`HomeFigure: ${post.id} has no homeFigure in its frontmatter`)
+
+const json = import.meta.glob('/src/content/blog/*/data/*.json', { eager: true, import: 'default' })
+const text = import.meta.glob<string>('/src/content/blog/*/data/*.mmd', { eager: true, query: '?raw', import: 'default' })
+const file = `/src/content/blog/${post.id.replace(/\/index$/, '')}/data/${fig.data}`
+const data = json[file] ?? text[file]
+if (data === undefined) throw new Error(`HomeFigure: ${post.id} points to ${file}, which does not exist`)
+---
+
+{
+  fig.kind === 'cost-by-scenario' && (
+    <CostByScenario
+      stats={data as ComponentProps<typeof CostByScenario>['stats']}
+      compact
+      label={fig.label}
+      caption={fig.caption}
+    />
+  )
+}
+{fig.kind === 'post-flow' && <PostFlow source={data as string} label={fig.label} caption={fig.caption} />}
+{
+  fig.kind === 'copilot-experiment' && (
+    <CopilotExperiment
+      data={data as ComponentProps<typeof CopilotExperiment>['data']}
+      body={post.body ?? ''}
+      label={fig.label}
+      caption={fig.caption}
+    />
+  )
+}

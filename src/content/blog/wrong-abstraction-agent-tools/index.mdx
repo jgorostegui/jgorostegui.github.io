@@ -4,7 +4,17 @@ date: 2026-04-13
 description: "Notion Agent CLI: a Claude Code benchmark against the official Notion MCP, showing how task-level tools reduce agent turns, context drag, and cost."
 tags: ["AI Agents", "Context Engineering", "Claude Code", "MCP", "Benchmarks", "Notion"]
 authors: ["josu-gorostegui"]
+homeFigure:
+  kind: cost-by-scenario
+  data: summary-stats.json
+  caption: "Mean cost per session, 95% CI"
+  label: "Mean cost per session by benchmark task, Notion MCP against Notion Agent CLI"
 ---
+
+import ContextGrowth from '@/components/viz/ContextGrowth.astro'
+import CostByScenario from '@/components/viz/CostByScenario.astro'
+import growth from './data/cumulative-tokens.json'
+import stats from './data/summary-stats.json'
 
 Most useful agent workflows start the same way: connect the model to the systems where the work already lives. In practice, that often means [MCP](https://modelcontextprotocol.io/docs/getting-started/intro): the service exposes tools, the agent calls them, and the results stay in the conversation while the model decides what to do next.
 
@@ -72,7 +82,7 @@ That is the benchmark in miniature. One interface had an operation that matched 
 
 When the primitive matches the task, the model calls it and moves on. When it does not, the model rebuilds the missing operation from the tools it has, inside the session, with all intermediate output carried forward. The cost of that reconstruction is what the benchmark measured.
 
-![Context growth per turn in representative scenarios](./bench-cumulative.png)
+<ContextGrowth data={growth} label="Context growth per turn in representative scenarios" />
 
 *Figure 1. Cumulative billed input tokens for selected benchmark scenarios, using iteration 1. The MCP path grows faster when it requires more turns and carries more intermediate tool output forward.*
 
@@ -85,7 +95,7 @@ When the primitive matches the task, the model calls it and moves on. When it do
 
 Mean turns fell from 6.5 to 2.8. Total cost fell from \$24.31 to \$8.33.
 
-![Mean session cost by scenario and model](./bench-turns-cost.png)
+<CostByScenario stats={stats} label="Mean session cost by scenario and model" />
 
 *Figure 2. Mean session cost by scenario across Sonnet 4.6 and Opus 4.6. The widest gaps appear when the MCP path forces the model into longer, lower-level workflows.*
 

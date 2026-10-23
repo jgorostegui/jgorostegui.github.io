@@ -1,0 +1,306 @@
+{
+ "source": "jgorostegui/notion-agent-cli@a0fe33a, benchmark/analysis.ipynb cell 24 (saved Plotly output, the data behind benchmark/assets/bench-cumulative.png)",
+ "measure": "cumulative billed input tokens (input + cache creation) per logical turn, iteration 1",
+ "scenarios": [
+  {
+   "id": "S1",
+   "name": "Read+Summarize"
+  },
+  {
+   "id": "S2",
+   "name": "Query+Report"
+  },
+  {
+   "id": "S3",
+   "name": "Copy+Modify"
+  },
+  {
+   "id": "S6",
+   "name": "Merge Pages"
+  },
+  {
+   "id": "S8",
+   "name": "Copy+Append"
+  },
+  {
+   "id": "S10",
+   "name": "Import DB"
+  }
+ ],
+ "series": [
+  {
+   "scenario": "S1",
+   "interface": "cli",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6836,
+    13070,
+    13705
+   ]
+  },
+  {
+   "scenario": "S1",
+   "interface": "mcp",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6126,
+    8195,
+    15116,
+    15864
+   ]
+  },
+  {
+   "scenario": "S1",
+   "interface": "cli",
+   "model": "opus",
+   "billed_cumulative": [
+    6845,
+    13077,
+    13730
+   ]
+  },
+  {
+   "scenario": "S1",
+   "interface": "mcp",
+   "model": "opus",
+   "billed_cumulative": [
+    6135,
+    12984,
+    19879,
+    21407,
+    22102
+   ]
+  },
+  {
+   "scenario": "S2",
+   "interface": "cli",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6833,
+    7820,
+    8343
+   ]
+  },
+  {
+   "scenario": "S2",
+   "interface": "mcp",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6123,
+    8301,
+    11943,
+    15644,
+    16010,
+    17431,
+    20435,
+    20673,
+    21482,
+    23836,
+    24165,
+    24918
+   ]
+  },
+  {
+   "scenario": "S2",
+   "interface": "cli",
+   "model": "opus",
+   "billed_cumulative": [
+    6842,
+    7824,
+    8454
+   ]
+  },
+  {
+   "scenario": "S2",
+   "interface": "mcp",
+   "model": "opus",
+   "billed_cumulative": [
+    6132,
+    8227,
+    11869,
+    13934,
+    14128,
+    14798,
+    15063,
+    15767,
+    16107,
+    17142,
+    17635,
+    18253,
+    18532,
+    19485,
+    20025,
+    48651,
+    50347
+   ]
+  },
+  {
+   "scenario": "S3",
+   "interface": "cli",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6834,
+    12978,
+    13642,
+    14208
+   ]
+  },
+  {
+   "scenario": "S3",
+   "interface": "mcp",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6124,
+    8201,
+    15015,
+    21959
+   ]
+  },
+  {
+   "scenario": "S3",
+   "interface": "cli",
+   "model": "opus",
+   "billed_cumulative": [
+    6843,
+    7240
+   ]
+  },
+  {
+   "scenario": "S3",
+   "interface": "mcp",
+   "model": "opus",
+   "billed_cumulative": [
+    6133,
+    8185,
+    15106,
+    21951
+   ]
+  },
+  {
+   "scenario": "S6",
+   "interface": "cli",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6883,
+    7269,
+    7498
+   ]
+  },
+  {
+   "scenario": "S6",
+   "interface": "mcp",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6173,
+    8280,
+    26082,
+    40300
+   ]
+  },
+  {
+   "scenario": "S6",
+   "interface": "cli",
+   "model": "opus",
+   "billed_cumulative": [
+    6892,
+    7265,
+    7497
+   ]
+  },
+  {
+   "scenario": "S6",
+   "interface": "mcp",
+   "model": "opus",
+   "billed_cumulative": [
+    6182,
+    8321,
+    26139,
+    43167
+   ]
+  },
+  {
+   "scenario": "S8",
+   "interface": "cli",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6866,
+    7369
+   ]
+  },
+  {
+   "scenario": "S8",
+   "interface": "mcp",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6156,
+    8227,
+    15150,
+    22047
+   ]
+  },
+  {
+   "scenario": "S8",
+   "interface": "cli",
+   "model": "opus",
+   "billed_cumulative": [
+    6875,
+    7307
+   ]
+  },
+  {
+   "scenario": "S8",
+   "interface": "mcp",
+   "model": "opus",
+   "billed_cumulative": [
+    6165,
+    9922,
+    16840,
+    24013
+   ]
+  },
+  {
+   "scenario": "S10",
+   "interface": "cli",
+   "model": "sonnet",
+   "billed_cumulative": [
+    7693,
+    9090,
+    9383,
+    10628
+   ]
+  },
+  {
+   "scenario": "S10",
+   "interface": "mcp",
+   "model": "sonnet",
+   "billed_cumulative": [
+    6983,
+    9466,
+    11276,
+    15692
+   ]
+  },
+  {
+   "scenario": "S10",
+   "interface": "cli",
+   "model": "opus",
+   "billed_cumulative": [
+    7702,
+    8859,
+    9175,
+    10406
+   ]
+  },
+  {
+   "scenario": "S10",
+   "interface": "mcp",
+   "model": "opus",
+   "billed_cumulative": [
+    6992,
+    9447,
+    11386,
+    15720
+   ]
+  }
+ ]
+}

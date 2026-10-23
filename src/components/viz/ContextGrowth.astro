@@ -1,0 +1,413 @@
+---
+/**
+ * Cumulative input tokens per logical turn (new input + cache writes; cache reads, also billed, are not counted),
+ * iteration 1, for the six showcase tasks:
+ * Notion MCP against Notion Agent CLI, one model at a time, switchable.
+ *
+ * Data: data/cumulative-tokens.json, extracted unchanged from the saved Plotly output of
+ * benchmark/analysis.ipynb cell 24 (jgorostegui/notion-agent-cli@a0fe33a), the data behind
+ * benchmark/assets/bench-cumulative.png.
+ */
+import './viz.css'
+
+interface Series {
+  scenario: string
+  interface: 'cli' | 'mcp'
+  model: 'sonnet' | 'opus'
+  billed_cumulative: number[]
+}
+interface Props {
+  data: { scenarios: { id: string; name: string }[]; series: Series[] }
+  label: string
+  model?: 'sonnet' | 'opus'
+}
+
+const { data, label, model = 'opus' } = Astro.props
+const MODELS = [
+  { key: 'sonnet', name: 'Sonnet 4.6' },
+  { key: 'opus', name: 'Opus 4.6' },
+] as const
+const IFACES = ['mcp', 'cli'] as const
+
+function niceStep(max: number) {
+  const raw = max / 4
+  const pow = 10 ** Math.floor(Math.log10(raw))
+  return [1, 2, 2.5, 5, 10].map((k) => k * pow).find((s) => s >= raw)!
+}
+// End labels keep one decimal (10.4k vs 10.6k, not 10k vs 11k); axis ticks are round numbers
+const tok = (v: number) => (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(v))
+const tick = (v: number) => (v >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(v))
+
+const panels = data.scenarios.map(({ id, name }) => {
+  const get = (m: string, f: string) => {
+    const s = data.series.find((x) => x.scenario === id && x.model === m && x.interface === f)
+    if (!s) throw new Error(`cumulative-tokens.json: missing ${id} ${m} ${f}`)
+    return s.billed_cumulative
+  }
+  const s = Object.fromEntries(MODELS.map(({ key }) => [key, { cli: get(key, 'cli'), mcp: get(key, 'mcp') }])) as Record<
+    'sonnet' | 'opus',
+    { cli: number[]; mcp: number[] }
+  >
+  const all = MODELS.flatMap(({ key }) => [...s[key].cli, ...s[key].mcp])
+  const n = Math.max(...MODELS.flatMap(({ key }) => [s[key].cli.length, s[key].mcp.length]))
+  const step = niceStep(Math.max(...all))
+  const top = Math.ceil(Math.max(...all) / step) * step
+  const ticks: number[] = []
+  for (let t = 0; t <= top; t += step) ticks.push(t)
+  const X = (i: number) => (n > 1 ? (i / (n - 1)) * 100 : 0)
+  const Y = (v: number) => 100 - (v / top) * 100
+  const line = (v: number[]) => v.map((y, i) => `${i ? 'L' : 'M'}${X(i).toFixed(2)},${Y(y).toFixed(2)}`).join(' ')
+  const area = (v: number[]) => `${line(v)} L${X(v.length - 1).toFixed(2)},100 L0,100 Z`
+  const ends = MODELS.flatMap(({ key }) => {
+    const pair = s[key]
+    const hiF = pair.mcp[pair.mcp.length - 1] >= pair.cli[pair.cli.length - 1] ? 'mcp' : 'cli'
+    return IFACES.map((f) => {
+      const v = pair[f]
+      const x = X(v.length - 1) / 100
+      return {
+        m: key,
+        f,
+        x,
+        y: Y(v[v.length - 1]) / 100,
+        text: tok(v[v.length - 1]),
+        pos: f === hiF ? 'above' : 'below',
+        anchor: x > 0.55 ? 'al-end' : 'al-start',
+      }
+    })
+  })
+  return { id, name, n, top, ticks, s, line, area, ends, Y }
+})
+---
+
+<figure class="viz viz-growth not-prose" data-viz="growth" data-model={model} aria-label={label}>
+  <div class="viz-bar">
+    <ul class="viz-legend">
+      <li><span class="viz-key viz-key--line" style="--c: var(--c-cli)"></span>Notion Agent CLI</li>
+      <li><span class="viz-key viz-key--line" style="--c: var(--c-mcp)"></span>Notion MCP</li>
+      <li class="vg-unit">New input + cache-write tokens, cumulative by logical turn (run 1; cache reads not counted)</li>
+    </ul>
+    <div class="viz-seg" role="group" aria-label="Model">
+      {
+        MODELS.map((m) => (
+          <button type="button" data-set={m.key} aria-pressed={m.key === model ? 'true' : 'false'}>
+            {m.name}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="vg-panels">
+    {
+      panels.map((p) => (
+        <section class="vg-panel">
+          <p class="vg-title">
+            <span class="viz-num vg-id">{p.id}</span>
+            {p.name}
+          </p>
+          <div class="vg-plot">
+            <div class="vg-y viz-num" aria-hidden="true">
+              {p.ticks.map((t) => (
+                <span style={`--y:${(t / p.top).toFixed(4)}`}>{t ? tick(t) : '0'}</span>
+              ))}
+            </div>
+            <div class="vg-area" data-p={JSON.stringify({ t: `${p.id} ${p.name}`, n: p.n, s: p.s })}>
+              <div class="vg-draw">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  {p.ticks.map((t) => (
+                    <line
+                      class:list={['vg-grid', { 'vg-base': t === 0 }]}
+                      x1="0"
+                      x2="100"
+                      y1={p.Y(t)}
+                      y2={p.Y(t)}
+                      vector-effect="non-scaling-stroke"
+                    />
+                  ))}
+                  {MODELS.flatMap(({ key }) =>
+                    IFACES.map((f) => (
+                      <g data-m={key} class={`vg-s vg-${f}`}>
+                        <path class="vg-fill" d={p.area(p.s[key][f])} />
+                        <path class="vg-line" d={p.line(p.s[key][f])} vector-effect="non-scaling-stroke" />
+                      </g>
+                    )),
+                  )}
+                </svg>
+                {p.ends.map((d) => (
+                  <span
+                    data-m={d.m}
+                    class={`vg-end vg-${d.f}`}
+                    style={`--x:${d.x.toFixed(4)};--y:${d.y.toFixed(4)}`}
+                    aria-hidden="true"
+                  />
+                ))}
+                {p.ends.map((d) => (
+                  <span
+                    data-m={d.m}
+                    class={`vg-lab viz-num vg-${d.pos} vg-${d.anchor}`}
+                    style={`--x:${d.x.toFixed(4)};--y:${d.y.toFixed(4)}`}
+                    aria-hidden="true"
+                  >
+                    {d.text}
+                  </span>
+                ))}
+              </div>
+              <span class="vg-cross" hidden />
+            </div>
+          </div>
+          <div class="vg-x viz-num" aria-hidden="true">
+            <span>1</span>
+            <span>logical turn</span>
+            <span>{p.n}</span>
+          </div>
+        </section>
+      ))
+    }
+  </div>
+
+  <div class="viz-tip" role="status" hidden></div>
+
+  <details class="viz-data">
+    <summary>Data</summary>
+    <div class="viz-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Model</th>
+            <th>Interface</th>
+            <th class="r">logical turns</th>
+            <th>Cumulative new input + cache-write tokens, logical turn by turn</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            panels.flatMap((p) =>
+              MODELS.flatMap(({ key, name }) =>
+                IFACES.map((f) => (
+                  <tr>
+                    <td>
+                      {p.id} {p.name}
+                    </td>
+                    <td>{name}</td>
+                    <td>{f === 'cli' ? 'Notion Agent CLI' : 'Notion MCP'}</td>
+                    <td class="r">{p.s[key][f].length}</td>
+                    <td class="viz-num">
+                      <span>{p.s[key][f].map((v) => v.toLocaleString('en-US')).join(' · ')}</span>
+                    </td>
+                  </tr>
+                )),
+              ),
+            )
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>
+
+<style is:global>
+  .viz-growth {
+    container-type: inline-size;
+  }
+
+  .vg-unit {
+    color: var(--ink-3);
+  }
+
+  .vg-panels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem 1.5rem;
+  }
+
+  @container (max-width: 36rem) {
+    .vg-panels {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem 1rem;
+    }
+  }
+
+  @container (max-width: 21rem) {
+    .vg-panels {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .vg-panel {
+    min-width: 0;
+  }
+
+  .vg-title {
+    margin: 0 0 0.5rem;
+    color: var(--ink-2);
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: normal;
+  }
+
+  .vg-id {
+    display: inline-block;
+    min-width: 1.75rem;
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+    font-weight: 400;
+  }
+
+  .vg-plot {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    height: 7.5rem;
+  }
+
+  .vg-y {
+    position: relative;
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+  }
+
+  .vg-y span {
+    position: absolute;
+    right: 0.375rem;
+    bottom: calc(var(--y) * 100%);
+    translate: 0 50%;
+    line-height: 1;
+  }
+
+  .vg-area {
+    position: relative;
+    min-width: 0;
+    cursor: crosshair;
+  }
+
+  .vg-draw {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(-12px -12px -12px -12px);
+    transition: clip-path 1.1s var(--ease);
+  }
+
+  .viz-growth.is-pre .vg-draw {
+    clip-path: inset(-12px 100% -12px -12px);
+  }
+
+  .vg-draw svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .vg-grid {
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+
+  .vg-base {
+    stroke: var(--border);
+  }
+
+  .vg-mcp {
+    --c: var(--c-mcp);
+  }
+
+  .vg-cli {
+    --c: var(--c-cli);
+  }
+
+  .vg-line {
+    fill: none;
+    stroke: var(--c);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .vg-fill {
+    fill: var(--c);
+    opacity: 0.1;
+  }
+
+  [data-theme='cyberpunk'] .vg-line {
+    filter: drop-shadow(0 0 3px var(--c));
+  }
+
+  /* The switch crossfades between models instead of hiding them */
+  .viz.viz-growth[data-model] [data-m] {
+    display: revert;
+    transition: opacity 0.35s var(--ease);
+  }
+
+  .viz.viz-growth[data-model='sonnet'] [data-m='opus'],
+  .viz.viz-growth[data-model='opus'] [data-m='sonnet'] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .vg-end {
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    top: calc(var(--y) * 100%);
+    width: 0.5rem;
+    height: 0.5rem;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 0 2px var(--background);
+  }
+
+  .vg-lab {
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    top: calc(var(--y) * 100%);
+    color: var(--ink);
+    font-size: 0.6875rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .vg-lab.vg-above {
+    translate: var(--tx) calc(-100% - 0.4375rem);
+  }
+
+  .vg-lab.vg-below {
+    translate: var(--tx) 0.4375rem;
+  }
+
+  .vg-lab.vg-al-end {
+    --tx: calc(-100% + 0.25rem);
+  }
+
+  .vg-lab.vg-al-start {
+    --tx: -0.25rem;
+  }
+
+  .vg-cross {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--x) * 100%);
+    width: 1px;
+    background: color-mix(in oklab, var(--foreground) 35%, transparent);
+    pointer-events: none;
+  }
+
+  .vg-cross[hidden] {
+    display: none;
+  }
+
+  .vg-x {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.375rem 0 0 2.25rem;
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+  }
+</style>
+
+<script>
+  import { initViz } from './viz'
+  initViz()
+</script>

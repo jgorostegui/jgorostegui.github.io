@@ -5,7 +5,15 @@ date: 2025-12-07
 description: "Kiroween 2025 hackathon, trying Kiro's Spec-Driven Development. A multimodal AI fitness app where text, voice, and image inputs route through typed validation before any action reaches the database."
 tags: ["AI", "LLM", "Gemini", "Kiro", "Spec-Driven Development", "FastAPI", "React", "Hackathon"]
 authors: ["josu-gorostegui"]
+homeFigure:
+  kind: post-flow
+  data: architecture.mmd
+  caption: "Architecture"
+  label: "The post's pipeline: text, voice and image go into Brain + Context + Vision, become structured actions, pass validation and confirmation, and are stored in MealLog, ExerciseLog and Chat history"
 ---
+
+import PostFlow from '@/components/viz/PostFlow.astro'
+import architecture from './data/architecture.mmd?raw'
 
 > Code available at [github.com/jgorostegui/fitness-copilot](https://github.com/jgorostegui/fitness-copilot).
 
@@ -81,19 +89,7 @@ I found that different hooks work better at different times. Automatic hooks are
 
 ## The Architecture
 
-```mermaid
-flowchart TB
-  Inputs["Text · Voice · Image"]
-  Pipeline["Brain + Context + Vision"]
-  Actions["Structured actions<br/>(ChatActionType)"]
-  Validation["Validation + confirmation"]
-  State["MealLog · ExerciseLog · Chat history"]
-
-  Inputs --> Pipeline
-  Pipeline --> Actions
-  Actions --> Validation
-  Validation --> State
-```
+<PostFlow source={architecture} label="Text, voice and image go into Brain + Context + Vision, become structured actions (ChatActionType), pass validation and confirmation, and are stored in MealLog, ExerciseLog and Chat history" />
 
 *Multimodal inputs become typed actions, validated before they reach state. Full system diagrams (chat, vision, voice, context building) in [ARCHITECTURE.md](https://github.com/jgorostegui/fitness-copilot/blob/main/ARCHITECTURE.md).*
 

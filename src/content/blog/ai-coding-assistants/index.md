@@ -5,6 +5,11 @@ description: "How tools like GitHub Copilot and ChatGPT are transforming the cod
 image: "./github_copilot_logo.webp"
 tags: ["AI", "Artificial Intelligence", "Large Language Models", "Github Copilot", "Programming", "Productivity"]
 authors: ["josu-gorostegui"]
+homeFigure:
+  kind: copilot-experiment
+  data: experiment.json
+  caption: "Time to finish the task"
+  label: "Controlled experiment cited in the post: time to finish the task with and without Copilot, for the developers who finished"
 ---
 
 Lately, there have been concerns regarding the use of coding assistants such as [GitHub Copilot](https://github.com/features/copilot). It's interesting to examine how tools like ChatGPT, GitHub Copilot, and similar LLMs-based solutions can help developers and software engineers boost their productivity. Setting privacy concerns aside, it is fascinating to consider how these tools transform the coding process. How much **time** do we truly spend on coding and how much on understanding the problem? Does the improvement justify adding this to every developer's tool belt? I would argue that **coding is not limited to any specific programming language or the act of writing code itself.** Instead, it involves developing a computational thinking mindset that improves problem-solving skills, logical solutions, and critical thinking. AI-powered neural networks amplify these attributes, making them valuable additions to the programming process.

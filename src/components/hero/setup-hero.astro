@@ -1,0 +1,67 @@
+---
+/**
+ * Home hero: Josu's corner in pixel art, drawn on a canvas: the desk
+ * with the curved ultrawide, the glass tower with two plants, the pegboard with the keyboards, the BenQ lamp and the
+ * homelab in the low cabinet beside the desk. Josu types; when the hero comes into view or you point at him, he
+ * swivels round and looks at you. The text is the site's (SITE, SOCIAL_LINKS).
+ */
+import { SITE, SOCIAL_LINKS } from '@/consts'
+import './setup-hero.css'
+
+// The narrowest screens leave the lamp out of the drawing; the engine then switches to the label without it
+const describe = (lamp: string) =>
+  "Pixel drawing of Josu's corner: Josu at a dark desk, seen from behind, typing in front of a curved ultrawide " +
+  `monitor. A glass-sided PC tower with two potted plants on top,${lamp} three keyboards, one on the desk and two on ` +
+  'a black pegboard, and, in a low open cabinet beside the desk, his homelab: a router, a switch, a UPS, an ' +
+  'eight-bay NAS and a red and white Raspberry Pi. Pointing at him makes him turn round and look at you.'
+const label = describe(' a white desk lamp with an articulated arm and a curved head,')
+const labelNoLamp = describe('')
+---
+
+<section class="px-hero" id="px-hero">
+  <canvas id="px" role="img" aria-label={label} data-label-no-lamp={labelNoLamp}></canvas>
+  <div class="px-who wrap">
+    <div class="px-who-in">
+      <p class="cmd">$ whoami</p>
+      <h1>{SITE.title}<span class="cur" aria-hidden="true">_</span></h1>
+      <p class="lede">{SITE.description}</p>
+      <p class="links">
+        {
+          SOCIAL_LINKS.map((link, i) => (
+            <>
+              {i > 0 && <span>/</span>}
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.label.toLowerCase()}
+              </a>
+            </>
+          ))
+        }
+      </p>
+    </div>
+  </div>
+  <div class="px-hot" id="px-hot"></div>
+  <input
+    class="px-type"
+    id="px-type"
+    type="text"
+    maxlength="60"
+    autocomplete="off"
+    autocapitalize="off"
+    spellcheck="false"
+    aria-label="Type on Josu's screen (Enter runs it, whoami makes him turn, Esc leaves)"
+  />
+  <noscript>
+    <style is:inline>
+      .px-hero { height: auto; padding-bottom: 2.5rem; }
+      #px, .px-hot, .px-type { display: none; }
+    </style>
+  </noscript>
+</section>
+
+<script>
+  // The engine and its sprites are one cached module. It runs once per page load; ClientRouter brings the home page
+  // back without a reload, so the hero is also mounted on astro:page-load (once per canvas, see mountHero).
+  import { mountHero } from './setup-hero.js'
+  mountHero()
+  document.addEventListener('astro:page-load', mountHero)
+</script>

@@ -1,0 +1,11 @@
+flowchart TB
+  Inputs["Text · Voice · Image"]:::inputs
+  Pipeline["Brain + Context + Vision"]
+  Actions["Structured actions<br/>(ChatActionType)"]
+  Validation["Validation + confirmation"]:::gate
+  State["MealLog · ExerciseLog · Chat history"]:::store
+
+  Inputs --> Pipeline
+  Pipeline --> Actions
+  Actions --> Validation
+  Validation --> State
