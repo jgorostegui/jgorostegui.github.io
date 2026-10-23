@@ -6,7 +6,7 @@
  * is a summary and can show less than they do.
  */
 import type { CollectionEntry } from 'astro:content'
-import type { ComponentProps } from 'astro/types'
+import { z } from 'astro/zod'
 import CopilotExperiment from './CopilotExperiment.astro'
 import CostByScenario from './CostByScenario.astro'
 import PostFlow from './PostFlow.astro'
@@ -22,25 +22,50 @@ if (!fig) throw new Error(`HomeFigure: ${post.id} has no homeFigure in its front
 const json = import.meta.glob('/src/content/blog/*/data/*.json', { eager: true, import: 'default' })
 const text = import.meta.glob<string>('/src/content/blog/*/data/*.mmd', { eager: true, query: '?raw', import: 'default' })
 const file = `/src/content/blog/${post.id.replace(/\/index$/, '')}/data/${fig.data}`
-const data = json[file] ?? text[file]
-if (data === undefined) throw new Error(`HomeFigure: ${post.id} points to ${file}, which does not exist`)
+const raw = json[file] ?? text[file]
+if (raw === undefined) throw new Error(`HomeFigure: ${post.id} points to ${file}, which does not exist`)
+
+// What each figure needs from its file; a file that does not match fails the build with the reason
+const arm = z.object({
+  cost_mean: z.number(),
+  cost_std: z.number(),
+  cost_ci_lo: z.number(),
+  cost_ci_hi: z.number(),
+  turns_mean: z.number(),
+  n: z.number(),
+})
+const pair = z.object({ with: z.number(), without: z.number() })
+const SHAPES = {
+  'cost-by-scenario': z.object({ scenarios: z.record(z.string(), z.record(z.string(), arm)) }),
+  'post-flow': z.string(),
+  'copilot-experiment': z.object({
+    quotes: z.array(z.string()).min(1),
+    time_min: pair,
+    study: z.object({ developers: z.number(), finished_per_group: z.number(), times: z.string() }),
+  }),
+}
+function load<K extends keyof typeof SHAPES>(kind: K): z.infer<(typeof SHAPES)[K]> {
+  const r = SHAPES[kind].safeParse(raw)
+  if (!r.success) throw new Error(`HomeFigure: ${file} is not data for a ${kind} figure (${post.id}): ${z.prettifyError(r.error)}`)
+  return r.data as z.infer<(typeof SHAPES)[K]>
+}
 ---
 
 {
   fig.kind === 'cost-by-scenario' && (
     <CostByScenario
-      stats={data as ComponentProps<typeof CostByScenario>['stats']}
+      stats={load('cost-by-scenario')}
       compact
       label={fig.label}
       caption={fig.caption}
     />
   )
 }
-{fig.kind === 'post-flow' && <PostFlow source={data as string} label={fig.label} caption={fig.caption} />}
+{fig.kind === 'post-flow' && <PostFlow source={load('post-flow')} label={fig.label} caption={fig.caption} />}
 {
   fig.kind === 'copilot-experiment' && (
     <CopilotExperiment
-      data={data as ComponentProps<typeof CopilotExperiment>['data']}
+      data={load('copilot-experiment')}
       body={post.body ?? ''}
       label={fig.label}
       caption={fig.caption}
