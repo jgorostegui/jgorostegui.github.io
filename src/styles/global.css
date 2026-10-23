@@ -58,7 +58,7 @@
   --muted-foreground: oklch(0.556 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.556 0 0);
   --link: oklch(0.56 0.19 259);
 }
 
@@ -206,6 +206,6 @@ svg[data-icon='lucide:hash'] {
   ::before,
   ::backdrop,
   ::file-selector-button {
-    @apply border-border outline-ring/50 tracking-tight;
+    @apply border-border outline-ring tracking-tight;
   }
 }

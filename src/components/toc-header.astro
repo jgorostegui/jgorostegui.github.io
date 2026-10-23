@@ -142,7 +142,7 @@ const { headings } = Astro.props
     static build() {
       state.headings = Array.from(
         document.querySelectorAll<HTMLElement>(
-          '.prose h2, .prose h3, .prose h4, .prose h5, .prose h6',
+          '.prose :is(h2, h3, h4, h5, h6)[id]:not(.not-prose *)',
         ),
       )
 

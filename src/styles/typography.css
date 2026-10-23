@@ -112,7 +112,13 @@
     }
 
     :where(table):not(:where(.not-prose, .not-prose *)) {
-      @apply mx-auto my-6 block max-w-fit overflow-x-auto text-sm;
+      @apply mx-auto my-6 block max-w-fit overflow-x-auto text-sm tabular-nums;
+      /* When the table scrolls sideways, a shadow at the edge shows there is more */
+      background:
+        linear-gradient(to right, var(--background) 30%, transparent) left / 2.5rem 100% no-repeat local,
+        linear-gradient(to left, var(--background) 30%, transparent) right / 2.5rem 100% no-repeat local,
+        radial-gradient(farthest-side at 0 50%, color-mix(in oklab, var(--foreground) 20%, transparent), transparent) left / 0.75rem 100% no-repeat scroll,
+        radial-gradient(farthest-side at 100% 50%, color-mix(in oklab, var(--foreground) 20%, transparent), transparent) right / 0.75rem 100% no-repeat scroll;
     }
 
     :where(thead):not(:where(.not-prose, .not-prose *)) {
@@ -120,7 +126,7 @@
     }
 
     :where(th):not(:where(.not-prose, .not-prose *)) {
-      @apply px-4 py-2 font-medium;
+      @apply px-4 py-2 font-medium max-sm:px-1.5;
       @apply text-left [[align=center]]:text-center [[align=right]]:text-right;
     }
 
@@ -129,8 +135,12 @@
     }
 
     :where(td):not(:where(.not-prose, .not-prose *)) {
-      @apply text-foreground/80 small px-4 py-2 align-top wrap-break-word *:first:mt-0! *:last:mb-0!;
+      @apply text-foreground/80 small px-4 py-2 align-top wrap-break-word max-sm:px-1.5 *:first:mt-0! *:last:mb-0!;
       @apply text-left [[align=center]]:text-center [[align=right]]:text-right;
+    }
+
+    :where(td:first-child):not(:where(.not-prose, .not-prose *)) {
+      @apply whitespace-nowrap;
     }
 
     :where(img, video, figure, .expressive-code):not(

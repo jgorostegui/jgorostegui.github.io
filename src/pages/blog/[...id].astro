@@ -139,11 +139,11 @@ const tocSections = await getTOCSections(currentPostId)
         }
 
         <div
-          class="text-muted-foreground divide-border mb-4 flex flex-col items-center justify-center divide-y text-xs sm:flex-row sm:flex-wrap sm:divide-x sm:divide-y-0 sm:text-sm"
+          class="text-muted-foreground divide-border mb-4 flex flex-row flex-wrap items-center justify-center divide-x text-xs sm:text-sm"
         >
           {
             authors.length > 0 && (
-              <div class="flex w-full items-center justify-center gap-x-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0">
+              <div class="flex items-center justify-center gap-x-2 px-2 first:pl-0 last:pr-0">
                 {authors.map((author) => (
                   <div class="flex items-center gap-x-1.5">
                     <Image
@@ -171,13 +171,13 @@ const tocSections = await getTOCSections(currentPostId)
           }
 
           <div
-            class="flex w-full items-center justify-center gap-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0"
+            class="flex items-center justify-center gap-2 px-2 first:pl-0 last:pr-0"
           >
             <span>{formatDate(post.data.date)}</span>
           </div>
 
           <div
-            class="flex w-full items-center justify-center gap-2 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0"
+            class="flex items-center justify-center gap-2 px-2 first:pl-0 last:pr-0"
           >
             <span>
               {postReadingTime}
@@ -195,7 +195,7 @@ const tocSections = await getTOCSections(currentPostId)
 
           {
             subpostCount > 0 && (
-              <div class="flex w-full items-center justify-center gap-1 py-2 sm:w-fit sm:px-2 sm:py-0 first:sm:pl-0 last:sm:pr-0">
+              <div class="flex items-center justify-center gap-1 px-2 first:pl-0 last:pr-0">
                 <Icon name="lucide:file-text" class="size-3" />
                 {subpostCount} subpost{subpostCount === 1 ? '' : 's'}
               </div>
@@ -219,11 +219,13 @@ const tocSections = await getTOCSections(currentPostId)
         </div>
       </div>
 
-      <PostNavigation
-        newerPost={navigation.newer}
-        olderPost={navigation.older}
-        parentPost={isCurrentSubpost ? navigation.parent : undefined}
-      />
+      <div class="max-sm:hidden">
+        <PostNavigation
+          newerPost={navigation.newer}
+          olderPost={navigation.older}
+          parentPost={isCurrentSubpost ? navigation.parent : undefined}
+        />
+      </div>
     </section>
 
     {
